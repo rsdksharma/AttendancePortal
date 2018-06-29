@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<application>
+	<doc jersey:generatedBy="Jersey: 2.26 2017-09-05 11:50:34" />
+	<doc
+		jersey:hint="This is full WADL including extended resources. To get simplified WADL with users resources only do not use the query parameter detail. Link: http://localhost:8080/AttendancePortal/v1/rest/application.wadl" />
+	<grammars />
+	<resources base="http://localhost:8080/AttendancePortal/v1/rest/">
+		<resource path="/users">
+			<method id="createUser" name="POST">
+				<request>
+					<representation mediaType="application/json" />
+				</request>
+				<response>
+					<representation mediaType="text/html" />
+				</response>
+			</method>
+			<method id="updateUser" name="PUT">
+				<response>
+					<representation mediaType="text/html" />
+				</response>
+			</method>
+			<method id="deleteUser" name="DELETE">
+				<response>
+					<representation mediaType="text/html" />
+				</response>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="application/vnd.sun.wadl+xml" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="text/plain" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="*/*" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<resource path="/{id}">
+				<param name="id" style="template" type="xs:string" />
+				<method id="getUserById" name="GET">
+					<response>
+						<representation mediaType="text/html" />
+						<representation mediaType="application/json" />
+					</response>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="application/vnd.sun.wadl+xml" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="text/plain" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+			</resource>
+		</resource>
+		<resource path="/members">
+			<method id="deleteMember" name="DELETE">
+				<response>
+					<representation mediaType="text/html" />
+				</response>
+			</method>
+			<method id="createMember" name="POST">
+				<response>
+					<representation mediaType="text/html" />
+				</response>
+			</method>
+			<method id="updateMember" name="PUT">
+				<response>
+					<representation mediaType="text/html" />
+				</response>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="application/vnd.sun.wadl+xml" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="text/plain" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="*/*" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<resource path="/{id}">
+				<param name="id" style="template" type="xs:string" />
+				<method id="getMemberById" name="GET">
+					<response>
+						<representation mediaType="text/html" />
+					</response>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="application/vnd.sun.wadl+xml" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="text/plain" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+			</resource>
+		</resource>
+		<resource path="application.wadl">
+			<method id="getWadl" name="GET">
+				<response>
+					<representation mediaType="application/vnd.sun.wadl+xml" />
+					<representation mediaType="application/xml" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="text/plain" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<method id="apply" name="OPTIONS">
+				<request>
+					<representation mediaType="*/*" />
+				</request>
+				<response>
+					<representation mediaType="*/*" />
+				</response>
+				<jersey:extended>true</jersey:extended>
+			</method>
+			<resource path="{path}">
+				<param name="path" style="template" type="xs:string" />
+				<method id="getExternalGrammar" name="GET">
+					<response>
+						<representation mediaType="application/xml" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="text/plain" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<method id="apply" name="OPTIONS">
+					<request>
+						<representation mediaType="*/*" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+					<jersey:extended>true</jersey:extended>
+				</method>
+				<jersey:extended>true</jersey:extended>
+			</resource>
+			<jersey:extended>true</jersey:extended>
+		</resource>
+	</resources>
+</application>
