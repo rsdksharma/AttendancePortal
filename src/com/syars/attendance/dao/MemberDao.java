@@ -7,20 +7,18 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoServerException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.WriteResult;
 import com.syars.attendance.constants.DBConstants;
-import com.syars.attendance.utils.DBUtils;
+import com.syars.attendance.exceptions.DatabaseException;
 import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.MemberVO;
 
 public class MemberDao {
 	private DBCollection col = null;
 	
-	public void createMember(MemberVO memberVo) {
-		MongoClient client = null;
+	public void createMember(MemberVO memberVo) throws DatabaseException {
 		try {
 			col = MongoDBUtils.getMongoDBCollection("RSMembers");
 			
@@ -28,27 +26,23 @@ public class MemberDao {
 			DBObject memberDoc = mapToDBObject(memberVo);
 			
 			//insert created feedback in MongoDB.
-			WriteResult writeResult = null;
-			writeResult = col.insert(memberDoc);
-			System.out.println("write result:"+writeResult);
+			WriteResult writeResult = col.insert(memberDoc);
+			if(writeResult.wasAcknowledged()) {
+				System.out.println(">>>>insertion acknowledged");
+			}
 		
+		}catch(MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
 		}catch(MongoServerException e) {
-			System.out.println("MongoServerException:"+e);
-			e.printStackTrace();
-		}catch(MongoTimeoutException ex) {
-			System.out.println("Timeout exception:"+ex);
-			ex.printStackTrace();
-		}catch(Exception e) {
-			System.out.println("Unknown exception:"+e);
-			e.printStackTrace();
+			throw new DatabaseException("MongoServerException", e);
 		}
 		finally {
 			//close resources
-			DBUtils.releaseResource(client);
+			MongoDBUtils.releaseResource();
 		}
 	}
 
-	public Map<String, MemberVO> getAllMembers() {
+	public Map<String, MemberVO> getAllMembers() throws DatabaseException {
 		Map<String, MemberVO> memberMap = new HashMap<String, MemberVO>();
 		try {
 			col = MongoDBUtils.getMongoDBCollection("RSMembers");
@@ -57,15 +51,10 @@ public class MemberDao {
 				DBObject result = cursor.next();
 				memberMap.put(result.get("Mobile").toString(), map(result, new MemberVO()));
 			}
+		}catch(MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
 		}catch(MongoServerException e) {
-			System.out.println("MongoServerException:"+e);
-			e.printStackTrace();
-		}catch(MongoTimeoutException ex) {
-			System.out.println("Timeout exception:"+ex);
-			ex.printStackTrace();
-		}catch(Exception e) {
-			System.out.println("Unknown exception:"+e);
-			e.printStackTrace();
+			throw new DatabaseException("MongoServerException", e);
 		}
 		finally {
 			//close resources
@@ -74,10 +63,56 @@ public class MemberDao {
 		return memberMap;
 	}
 	
-	public MemberVO getMember(String memberId) {
+	public MemberVO getMember(String memberId) throws DatabaseException {
 		return getAllMembers().get(memberId);
 	}
 	
+
+	public int updateMember(MemberVO memberVo) throws DatabaseException{
+		int updateResult = 0;
+		try {
+			col = MongoDBUtils.getMongoDBCollection("RSMembers");
+			
+			//createDBObject. This object will be in JSON format.
+			DBObject memberDoc = mapToDBObject(memberVo);
+			
+			//create query
+			DBObject query = BasicDBObjectBuilder.start().add("Mobile", (memberVo.getMobileNumber())).get();
+			
+			//insert created feedback in MongoDB.
+			WriteResult writeResult = col.update(query,memberDoc);
+			System.out.println("write result for update member:"+writeResult);
+			if(writeResult.isUpdateOfExisting()) {
+				updateResult = 1;
+			}
+		
+		}catch(MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
+		}catch(MongoServerException e) {
+			throw new DatabaseException("MongoServerException", e);
+		}
+		finally {
+			//close resources
+			MongoDBUtils.releaseResource();
+		}
+		return updateResult;
+	}
+	
+	public void deleteMember(String memberId) throws DatabaseException{
+		try {
+			col = MongoDBUtils.getMongoDBCollection("RSMembers");
+			DBObject query = BasicDBObjectBuilder.start().add("Mobile", memberId).get();
+			col.remove(query);
+		}catch(MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
+		}catch(MongoServerException e) {
+			throw new DatabaseException("MongoServerException", e);
+		}
+		finally {
+			//close resources
+			MongoDBUtils.releaseResource();
+		}
+	}
 	private DBObject mapToDBObject(MemberVO memberVo) {
 		int count = 0;
 		if(col.getStats() != null) {
