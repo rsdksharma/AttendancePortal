@@ -21,17 +21,16 @@ public class UserDao {
 
 
 	public UserVO getUserCredentials(String userId) {
-		UserVO user = new UserVO();
+		UserVO user = null;
 		try {
 			col = MongoDBUtils.getMongoDBCollection("RSUsers");
 			DBObject query = BasicDBObjectBuilder.start().add("User Id", userId).get();
 			DBCursor cursor = col.find(query);
 			while(cursor.hasNext()){
+				user = new UserVO();
 				DBObject result = cursor.next();
 				user.setPassword(result.get("Password").toString());
 				user.setRole(result.get("User Role").toString());
-				System.out.println(">>>password:"+user.getPassword());
-				System.out.println(">>>Role:"+user.getRole());
 			}
 			
 		}catch(MongoServerException e) {

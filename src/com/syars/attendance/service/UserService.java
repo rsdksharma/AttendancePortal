@@ -2,39 +2,33 @@ package com.syars.attendance.service;
 
 import java.util.Set;
 
+import com.syars.attendance.constants.AttendanceConstants;
 import com.syars.attendance.dao.UserDao;
 import com.syars.attendance.vo.UserVO;
 
 public class UserService {
 	UserDao userDao = new UserDao();
 
-	public String registerAsNormaluser(UserVO userVo) {
-		String message = "User registered successfully.\nBranch UID Number is:" + userVo.getBranchUIDNumber()
-				+ ".\nType of user is:" + userVo.getRole();
-		return message;
-	}
+	public String checkUserAuthorization(String userId, String password, Set<String> rolesSet) {
 
-	public boolean checkUserAuthorization(String userId, String password, Set<String> rolesSet) {
-		boolean isAllowed = false;
-
-		// Step 1. Fetch password from database and match with password in argument
-		// If both match then get the defined role for user from database and continue;
-		// else return isAllowed [false]
-
+		//if user id, password and role defined matches then return passed
 		UserVO user = userDao.getUserCredentials(userId);
-		if (password.equals(user.getPassword())) {
-			// Step 2. Verify user role
-			if (rolesSet.contains(user.getRole())) {
-				return true;
-			} else {
-				// logger role not allowed
-			}
-		} else {
-			// invalid password
+		if(user == null) {
+			return AttendanceConstants.INVALID_USER;
 		}
-
-		return isAllowed;
-
+		else {
+			if (!password.equals(user.getPassword())) {
+				return AttendanceConstants.INVALID_PASSWORD;
+			}
+			else {
+				if(!rolesSet.contains(user.getRole())) {
+					return AttendanceConstants.ROLE_NOT_ALLOWED;
+				}
+				else {
+					return AttendanceConstants.PASSED;
+				}
+			}
+		}
 	}
 
 	public void createUser(UserVO userVo) {

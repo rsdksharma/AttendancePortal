@@ -19,6 +19,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.glassfish.jersey.internal.util.Base64;
 
+import com.syars.attendance.constants.AttendanceConstants;
 import com.syars.attendance.service.UserService;
 
 @Provider
@@ -29,8 +30,8 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 
 	private static final String AUTHORIZATION_PROPERTY = "Authorization";
 	private static final String AUTHENTICATION_SCHEME = "Basic";
-	private static final Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED)
-			.entity("You are not authorized to access this resource").build();
+	private static Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED)
+			.entity(AttendanceConstants.ACCESS_DENIED).build();
 	private static final Response ACCESS_FORBIDDEN = Response.status(Response.Status.FORBIDDEN)
 			.entity("Access blocked for all users !!").build();
 
@@ -87,7 +88,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 		System.out.println(">>>>inside isUserAllowedMethod, userName:" + username + ", password:" + password
 				+ ", rolesAllowed:" + rolesSet);
 
+		boolean isAuthorized = true;
 		UserService userService = new UserService();
-		return userService.checkUserAuthorization(username, password, rolesSet);
+		String authorizationResult = userService.checkUserAuthorization(username, password, rolesSet);
+		if(!AttendanceConstants.PASSED.equals(authorizationResult)) {
+			String message =AttendanceConstants.ACCESS_DENIED + "\n" + authorizationResult;
+			ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED)
+					.entity(message).build();
+			isAuthorized = false;
+		}
+		return isAuthorized;
 	}
 }
