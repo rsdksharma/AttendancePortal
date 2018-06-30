@@ -1,5 +1,7 @@
 package com.syars.attendance.resources;
 
+import java.util.Map;
+
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -33,6 +35,14 @@ public class MemberResource {
 		MemberVO memberVo = memberService.getMember(memberId);
 		//Response.ok().entity(memberVo).build();
 		return Response.ok().entity(memberVo).build();
+	}
+	
+	@GET
+	@RolesAllowed({ Roles.ADMIN })
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+	public Response getAllMembers() {
+		Map<String, MemberVO> memberMap = memberService.getAllMembers();
+		return Response.ok().entity(memberMap).build();
 	}
 
 	@POST

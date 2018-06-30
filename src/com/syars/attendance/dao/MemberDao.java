@@ -1,7 +1,9 @@
 package com.syars.attendance.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -15,8 +17,6 @@ import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.MemberVO;
 
 public class MemberDao {
-	private MongoClient client = null;
-	private DB db = null;
 	private DBCollection col = null;
 	
 	public void createMember(MemberVO memberVo) {
@@ -48,15 +48,14 @@ public class MemberDao {
 		}
 	}
 
-	public MemberVO getMember(String memberId) {
-		MemberVO memberVo = null;
+	public Map<String, MemberVO> getAllMembers() {
+		Map<String, MemberVO> memberMap = new HashMap<String, MemberVO>();
 		try {
 			col = MongoDBUtils.getMongoDBCollection("RSMembers");
-			DBObject query = BasicDBObjectBuilder.start().add("Mobile", memberId).get();
-			DBCursor cursor = col.find(query);
+			DBCursor cursor = col.find();
 			while(cursor.hasNext()){
 				DBObject result = cursor.next();
-				memberVo = map(result, new MemberVO());
+				memberMap.put(result.get("Mobile").toString(), map(result, new MemberVO()));
 			}
 		}catch(MongoServerException e) {
 			System.out.println("MongoServerException:"+e);
@@ -72,7 +71,11 @@ public class MemberDao {
 			//close resources
 			MongoDBUtils.releaseResource();
 		}
-		return memberVo;
+		return memberMap;
+	}
+	
+	public MemberVO getMember(String memberId) {
+		return getAllMembers().get(memberId);
 	}
 	
 	private DBObject mapToDBObject(MemberVO memberVo) {
