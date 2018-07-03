@@ -14,14 +14,12 @@ import com.mongodb.WriteResult;
 import com.syars.attendance.constants.AttendanceConstants;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.exceptions.DatabaseException;
-import com.syars.attendance.mappers.AttendanceMapper;
 import com.syars.attendance.mappers.UserMapper;
 import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.UserVO;
 
 public class UserDao {
 	private DBCollection col = null;
-	AttendanceMapper mapper1 = new AttendanceMapper();
 	UserMapper mapper = new UserMapper();
 
 	public UserVO getUserCredentials(String userId) throws DatabaseException {
