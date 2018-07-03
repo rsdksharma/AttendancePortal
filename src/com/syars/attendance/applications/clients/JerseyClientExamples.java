@@ -1,4 +1,4 @@
-package com.syars.attendance.applications.clients;
+/*package com.syars.attendance.applications.clients;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import com.syars.attendance.vo.UserVO;
 public class JerseyClientExamples {
 	public static void main(String[] args) {
 
-		/*ClientConfig config = new ClientConfig();
+		ClientConfig config = new ClientConfig();
 
 		Client client = ClientBuilder.newClient(config);
 
@@ -39,7 +39,7 @@ public class JerseyClientExamples {
 		
 		System.out.println(">>>>html answer:" + htmlAnswer);
 		System.out.println(">>>>Response:" + response);
-		*/
+		
 		httpPOSTMethodExample();
 	}
 
@@ -126,3 +126,4 @@ public class JerseyClientExamples {
 		System.out.println(response.readEntity(String.class));
 	}
 }
+*/

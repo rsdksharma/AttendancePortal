@@ -62,12 +62,13 @@ public class MemberResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response createMember(MemberVO memberVo) {
+		
 		int result = memberService.createMember(memberVo);
 		Response response = Response.status(500).entity("Member Could not be Created.").build();
 		if(result>0) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(memberVo.getMobileNumber())
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(memberVo.getMemberID())
 					.build().toString());
 			response = Response.status(201).entity("Member Created. Resource path is:\n" + selfLink.getHref()).build();
 		}

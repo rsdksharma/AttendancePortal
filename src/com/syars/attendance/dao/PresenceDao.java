@@ -13,6 +13,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoServerException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.WriteResult;
+import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.exceptions.DatabaseException;
 import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.PresenceVO;
@@ -22,7 +23,7 @@ public class PresenceDao {
 
 	public void insertPresence(PresenceVO presenceVo) throws DatabaseException {
 		try {
-			col = MongoDBUtils.getMongoDBCollection("AttendanceSheetCollection");
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
 
 			// createDBObject. This object will be in JSON format.
 			DBObject presenceDoc = mapToDBObject(presenceVo);
@@ -46,8 +47,8 @@ public class PresenceDao {
 	private DBObject mapToDBObject(PresenceVO presenceVo) {
 		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
 
-		docBuilder.append("MemberId", presenceVo.getMemberId());
-		docBuilder.append("Date", new Date());
+		docBuilder.append(DBCollectionAttributes.MEMBER_ID, presenceVo.getMemberId());
+		docBuilder.append(DBCollectionAttributes.PRESENCE_DATE, new Date());
 
 		return docBuilder.get();
 	}
@@ -55,15 +56,15 @@ public class PresenceDao {
 	public Set<Date> retrievePresence(String memberId) throws DatabaseException {
 		Set<Date> dateSet;
 		try {
-			col = MongoDBUtils.getMongoDBCollection("AttendanceSheetCollection");
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
 			// create query
-			DBObject query = BasicDBObjectBuilder.start().add("MemberId", memberId).get();
+			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, memberId).get();
 
 			DBCursor cursor = col.find(query);
 			dateSet = new HashSet<Date>();
 			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
-				dateSet.add((Date) result.get("Date"));
+				dateSet.add((Date) result.get(DBCollectionAttributes.PRESENCE_DATE));
 			}
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
@@ -80,7 +81,7 @@ public class PresenceDao {
 		Map<String, Set<Date>> PresenceMap = new HashMap<String, Set<Date>>();
 
 		try {
-			col = MongoDBUtils.getMongoDBCollection("AttendanceSheetCollection");
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
 
 			// create set of members present
 			Set<String> memberSet = extractUniqueMembers();
@@ -104,20 +105,20 @@ public class PresenceDao {
 		Set<String> memberSet = new HashSet<String>();
 		while (cursor.hasNext()) {
 			DBObject result = cursor.next();
-			memberSet.add(result.get("MemberId").toString());
+			memberSet.add(result.get(DBCollectionAttributes.MEMBER_ID).toString());
 		}
 		return memberSet;
 	}
 
 	private Set<Date> extractPresenceDates(String member) {
 		Set<Date> dateSet;
-		DBObject query = BasicDBObjectBuilder.start().add("MemberId", member).get();
+		DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, member).get();
 
 		DBCursor cursor = col.find(query);
 		dateSet = new HashSet<Date>();
 		while (cursor.hasNext()) {
 			DBObject result = cursor.next();
-			dateSet.add((Date) result.get("Date"));
+			dateSet.add((Date) result.get(DBCollectionAttributes.PRESENCE_DATE));
 		}
 		return dateSet;
 	}

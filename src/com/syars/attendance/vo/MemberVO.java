@@ -2,67 +2,56 @@ package com.syars.attendance.vo;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.syars.attendance.enums.MemberEnum;
 
 public class MemberVO {
 	
+	@NotNull
 	private String fullName;
+	//@NotNull
+	private Date dateOfBirth;
+	@NotNull
+	private String mobileNumber;
+	
 	private String firstName;
 	private String lastName;
-	private String globalUIDNumber;
-	private String branchUIDNumber;
-	private Date dateOfBirth;
-	private String mobileNumber;
-	private String emailId;
-	private String branch;
 	private String fathersName;
 	private String mothersName;
+	
+	private String branch;
+	private String emailId;
+	private String memberID; //auto generated
+	private String aadharID;
+	private String branchID; // auto generated
+	private String globalUID;
 	private String fathersUID;
 	private String mothersUID;
-	private boolean isInitiated;
-	private boolean isJigyashu;
-	private boolean isStudent;
+	
+	private String pictureId; //auto generate and save
+	private String signatureId; //auto generate and save
+	private String thumbId; //auto generate and save
+	
+	private String registrationDate;
+	private Date firstInitiationDate;
+	private Date secondInitiationDate;
+	
 	private MemberEnum memberType;
-	private String pictureId;
-	private String signatureId;
-	private String thumbId;
-	private String dateOfRegistration;
-	private String dateOfFirstInitiation;
-	private String dateOfSecondInitiation;
+	private boolean initiatedFlag;
+	private boolean jigyashuFlag;
+	private boolean studentFlag;
+	private boolean userAlsoFlag;
+	
 	private String qualification;
 	private String profession;
 	private String specialization;
-	
 	
 	public String getFullName() {
 		return fullName;
 	}
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
-	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getGlobalUIDNumber() {
-		return globalUIDNumber;
-	}
-	public void setGlobalUIDNumber(String globalUIDNumber) {
-		this.globalUIDNumber = globalUIDNumber;
-	}
-	public String getBranchUIDNumber() {
-		return branchUIDNumber;
-	}
-	public void setBranchUIDNumber(String branchUIDNumber) {
-		this.branchUIDNumber = branchUIDNumber;
 	}
 	public Date getDateOfBirth() {
 		return dateOfBirth;
@@ -76,17 +65,17 @@ public class MemberVO {
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
-	public String getEmailId() {
-		return emailId;
+	public String getFirstName() {
+		return firstName;
 	}
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
-	public String getBranch() {
-		return branch;
+	public String getLastName() {
+		return lastName;
 	}
-	public void setBranch(String branch) {
-		this.branch = branch;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	public String getFathersName() {
 		return fathersName;
@@ -100,6 +89,42 @@ public class MemberVO {
 	public void setMothersName(String mothersName) {
 		this.mothersName = mothersName;
 	}
+	public String getBranch() {
+		return branch;
+	}
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	public String getMemberID() {
+		return memberID;
+	}
+	public void setMemberID(String memberID) {
+		this.memberID = memberID;
+	}
+	public String getAadharID() {
+		return aadharID;
+	}
+	public void setAadharID(String aadharID) {
+		this.aadharID = aadharID;
+	}
+	public String getBranchID() {
+		return branchID;
+	}
+	public void setBranchID(String branchID) {
+		this.branchID = branchID;
+	}
+	public String getGlobalUID() {
+		return globalUID;
+	}
+	public void setGlobalUID(String globalUID) {
+		this.globalUID = globalUID;
+	}
 	public String getFathersUID() {
 		return fathersUID;
 	}
@@ -111,30 +136,6 @@ public class MemberVO {
 	}
 	public void setMothersUID(String mothersUID) {
 		this.mothersUID = mothersUID;
-	}
-	public boolean isInitiated() {
-		return isInitiated;
-	}
-	public void setInitiated(boolean isInitiated) {
-		this.isInitiated = isInitiated;
-	}
-	public boolean isJigyashu() {
-		return isJigyashu;
-	}
-	public void setJigyashu(boolean isJigyashu) {
-		this.isJigyashu = isJigyashu;
-	}
-	public boolean isStudent() {
-		return isStudent;
-	}
-	public void setStudent(boolean isStudent) {
-		this.isStudent = isStudent;
-	}
-	public MemberEnum getMemberType() {
-		return memberType;
-	}
-	public void setMemberType(MemberEnum memberType) {
-		this.memberType = memberType;
 	}
 	public String getPictureId() {
 		return pictureId;
@@ -154,23 +155,54 @@ public class MemberVO {
 	public void setThumbId(String thumbId) {
 		this.thumbId = thumbId;
 	}
-	public String getDateOfRegistration() {
-		return dateOfRegistration;
+	public String getRegistrationDate() {
+		return registrationDate;
 	}
-	public void setDateOfRegistration(String dateOfRegistration) {
-		this.dateOfRegistration = dateOfRegistration;
+	public void setRegistrationDate(String registrationDate) {
+		this.registrationDate = registrationDate;
 	}
-	public String getDateOfFirstInitiation() {
-		return dateOfFirstInitiation;
+	public Date getFirstInitiationDate() {
+		return firstInitiationDate;
 	}
-	public void setDateOfFirstInitiation(String dateOfFirstInitiation) {
-		this.dateOfFirstInitiation = dateOfFirstInitiation;
+	public void setFirstInitiationDate(Date firstInitiationDate) {
+		this.firstInitiationDate = firstInitiationDate;
 	}
-	public String getDateOfSecondInitiation() {
-		return dateOfSecondInitiation;
+	public Date getSecondInitiationDate() {
+		return secondInitiationDate;
 	}
-	public void setDateOfSecondInitiation(String dateOfSecondInitiation) {
-		this.dateOfSecondInitiation = dateOfSecondInitiation;
+	public void setSecondInitiationDate(Date secondInitiationDate) {
+		this.secondInitiationDate = secondInitiationDate;
+	}
+	public MemberEnum getMemberType() {
+		return memberType;
+	}
+	public void setMemberType(MemberEnum memberType) {
+		this.memberType = memberType;
+	}
+	public boolean isInitiatedFlag() {
+		return initiatedFlag;
+	}
+	public void setInitiatedFlag(boolean isInitiated) {
+		this.initiatedFlag = isInitiated;
+	}
+	public boolean isJigyashuFlag() {
+		return jigyashuFlag;
+	}
+	public void setJigyashuFlag(boolean isJigyashu) {
+		this.jigyashuFlag = isJigyashu;
+	}
+	public boolean isStudentFlag() {
+		return studentFlag;
+	}
+	public void setStudentFlag(boolean isStudent) {
+		this.studentFlag = isStudent;
+	}
+	
+	public boolean isUserAlsoFlag() {
+		return userAlsoFlag;
+	}
+	public void setUserAlsoFlag(boolean userAlso) {
+		this.userAlsoFlag = userAlso;
 	}
 	public String getQualification() {
 		return qualification;

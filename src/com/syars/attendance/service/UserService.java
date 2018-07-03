@@ -25,7 +25,7 @@ public class UserService {
 					return AttendanceConstants.INVALID_PASSWORD;
 				}
 				else {
-					if(!rolesSet.contains(user.getRole())) {
+					if(!rolesSet.contains(user.getUserRole())) {
 						return AttendanceConstants.ROLE_NOT_ALLOWED;
 					}
 					else {
@@ -34,14 +34,20 @@ public class UserService {
 				}
 			}
 		} catch (DatabaseException e) {
+			if(e.getMessage().equals(AttendanceConstants.MULTIPLE_USERS)) {
+				return AttendanceConstants.MULTIPLE_USERS;
+			}
+			else if(e.getMessage().equals(AttendanceConstants.NO_PASSWORD)) {
+				return AttendanceConstants.NO_PASSWORD;
+			}
 			return AttendanceConstants.DATABASE_EXCEPTION;
 		}
 	}
 
-	public int createUser(UserVO userVo) {
+	public int registerMemberAsUser(UserVO userVo) {
 		int result = 1;
 		try {
-			userDao.createUser(userVo);
+			userDao.registerMemberAsUser(userVo);
 		} catch (DatabaseException e) {
 			result = 0;
 		}

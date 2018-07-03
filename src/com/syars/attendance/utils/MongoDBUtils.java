@@ -5,6 +5,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.constants.DBConstants;
 import com.syars.attendance.vo.MemberVO;
 import com.syars.attendance.vo.UserVO;
@@ -39,9 +40,9 @@ public class MongoDBUtils {
 		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
 
 		// docBuilder.append("_id", count);
-		docBuilder.append("User Id", userVo.getUserId());
-		docBuilder.append("Password", userVo.getPassword());
-		docBuilder.append("User Role", userVo.getRole());
+		docBuilder.append(DBCollectionAttributes.USER_ID, userVo.getUserId());
+		docBuilder.append(DBCollectionAttributes.PASSWORD, userVo.getPassword());
+		docBuilder.append(DBCollectionAttributes.USER_ROLE, userVo.getUserRole());
 
 		return docBuilder.get();
 	}
@@ -56,9 +57,9 @@ public class MongoDBUtils {
 		// docBuilder.append("_id", "MEMBER_"+count); //think for creating unique id
 		// docBuilder.append("Branch UID", memberVo.getBranchUIDNumber());
 		// docBuilder.append("Global UID", memberVo.getGlobalUIDNumber());
-		docBuilder.append("FullName", memberVo.getFullName());
-		docBuilder.append("Mobile", memberVo.getMobileNumber());
-		docBuilder.append("Email", memberVo.getEmailId());
+		docBuilder.append(DBCollectionAttributes.FULL_NAME, memberVo.getFullName());
+		docBuilder.append(DBCollectionAttributes.MOBILE_NUMBER, memberVo.getMobileNumber());
+		docBuilder.append(DBCollectionAttributes.EMAIL_ID, memberVo.getEmailId());
 
 		return docBuilder.get();
 	}

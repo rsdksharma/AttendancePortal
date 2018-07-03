@@ -21,7 +21,6 @@ import org.apache.wink.common.model.atom.AtomLink;
 
 import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.UserService;
-import com.syars.attendance.vo.MemberVO;
 import com.syars.attendance.vo.UserVO;
 
 @DenyAll
@@ -35,11 +34,11 @@ public class UserResource {
 	@GET
 	@RolesAllowed({ Roles.ADMIN, Roles.VOLUNTEER })
 	@Path(ResourcePathConstants._USERS_ID)
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response getUserById(@PathParam("id") String userId) {
 		UserVO UserVo = userService.getUser(userId);
 		Response response = Response.noContent().entity("Could not find specified User").build();
-		if(UserVo != null) {
+		if (UserVo != null) {
 			response = Response.ok().entity(UserVo).build();
 		}
 		return response;
@@ -47,50 +46,49 @@ public class UserResource {
 
 	@GET
 	@RolesAllowed({ Roles.ADMIN })
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response getAllUsers() {
 		Map<String, UserVO> userMap = userService.getAllUsers();
 		Response response = Response.noContent().entity("No User found").build();
-		if(userMap != null && !userMap.isEmpty()) {
+		if (userMap != null && !userMap.isEmpty()) {
 			response = Response.ok().entity(userMap).build();
 		}
 		return response;
 	}
-	
+
 	@POST
 	@RolesAllowed({ Roles.ADMIN })
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_HTML)
-	public Response createUser(UserVO userVo) {
-		/*String message = "inside createUser";
-		userService.createUser(userVo);
-		Response.ok().entity(message).build();
-		return Response.ok().entity(message).build();*/
-		
-		int result = userService.createUser(userVo);
-		Response response = Response.status(500).entity("User Could not be Created.").build();
-		if(result>0) {
+	public Response registerMemberAsUser(UserVO userVo) {
+		int result = userService.registerMemberAsUser(userVo);
+		Response response = Response.status(500).entity("User Could not be Registered.").build();
+		if (result > 0) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(userVo.getUserId())
-					.build().toString());
-			response = Response.status(201).entity("User Created. Resource path is:\n" + selfLink.getHref()).build();
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(userVo.getMemberId()).build().toString());
+			response = Response.status(201).entity("User Registered. Resource path is:\n" + selfLink.getHref()).build();
 		}
 		return response;
 	}
+
 	@PUT
-	@RolesAllowed({ Roles.ADMIN, Roles.VOLUNTEER })
+	@RolesAllowed({ Roles.ADMIN, Roles.VOLUNTEER, Roles.FIRST_TIME_USER })
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response updateUser(UserVO userVo) {
-		int result = userService.updateUser(userVo);
+		
 		Response response = Response.status(500).entity("User Could not be Updated.").build();
-		if(result>0) {
+		if(userVo.getMemberId() == null || userVo.getMemberId().isEmpty()) {
+			return Response.status(400).entity("Please enter member id").build();
+		}
+		int result = userService.updateUser(userVo);
+		if (result > 0) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(userVo.getUserId())
-					.build().toString());
-			response = Response.status(Response.Status.ACCEPTED).entity("User Updated successfully. Resource path is:\n" + selfLink.getHref()).build();
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(userVo.getMemberId()).build().toString());
+			response = Response.status(Response.Status.ACCEPTED)
+					.entity("User Updated successfully. Resource path is:\n" + selfLink.getHref()).build();
 		}
 		return response;
 	}
@@ -98,16 +96,15 @@ public class UserResource {
 	@DELETE
 	@DenyAll
 	@Path(ResourcePathConstants._USERS_ID)
-	@RolesAllowed({Roles.ADMIN})
+	@RolesAllowed({ Roles.ADMIN })
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response deleteUser(@PathParam("id") String userId) {
 		int result = userService.deleteMember(userId);
 		Response response = Response.status(500).entity("Member Could not be Deleted.").build();
-		if(result>0) {
+		if (result > 0) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder()
-					.build().toString());
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().build().toString());
 			response = Response.status(202).entity("User deleted from Resource path:\n" + selfLink.getHref()).build();
 		}
 		return response;

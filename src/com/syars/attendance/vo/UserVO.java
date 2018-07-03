@@ -1,31 +1,30 @@
 package com.syars.attendance.vo;
 
-import org.apache.wink.common.model.atom.AtomLink;
-
-public class UserVO extends MemberVO{
-	private AtomLink link;
+public class UserVO {
+	
+	private String memberId;
 	private String userId;
 	private String password;
-	private String role;
-	
+	private String userRole;
+	private boolean userIdCustomized;
+	private String customizedUserId;
+
 	public UserVO() {
 		super();
 	}
 
-	public UserVO(AtomLink link, String userId, String password, String role) {
+	public UserVO(String userId, String password, String role) {
 		super();
-		this.link = link;
 		this.userId = userId;
 		this.password = password;
-		this.role = role;
 	}
 
-	public AtomLink getLink() {
-		return link;
+	public String getMemberId() {
+		return memberId;
 	}
 
-	public void setLink(AtomLink link) {
-		this.link = link;
+	public void setMemberId(String memberID) {
+		this.memberId = memberID;
 	}
 
 	public String getUserId() {
@@ -44,12 +43,28 @@ public class UserVO extends MemberVO{
 		this.password = password;
 	}
 
-	public String getRole() {
-		return role;
+	public String getUserRole() {
+		return userRole;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
 	}
-	
+
+	public boolean isUserIdCustomized() {
+		return userIdCustomized;
+	}
+
+	public void setUserIdCustomized(boolean userIdCustomized) {
+		this.userIdCustomized = userIdCustomized;
+	}
+
+	public String getCustomizedUserId() {
+		return customizedUserId;
+	}
+
+	public void setCustomizedUserId(String customizedUserId) {
+		this.customizedUserId = customizedUserId;
+	}
+
 }

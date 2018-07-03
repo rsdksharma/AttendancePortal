@@ -20,6 +20,7 @@ import javax.ws.rs.ext.Provider;
 import org.glassfish.jersey.internal.util.Base64;
 
 import com.syars.attendance.constants.AttendanceConstants;
+import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.UserService;
 
 @Provider
@@ -91,24 +92,31 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 		boolean isAuthorized = true;
 		UserService userService = new UserService();
 		String authorizationResult = userService.checkUserAuthorization(username, password, rolesSet);
-		//DB exception occurred - internal server error - 503
-		if(AttendanceConstants.DATABASE_EXCEPTION.equals(authorizationResult)) {
-			ACCESS_DENIED = Response.status(503)
-					.entity(AttendanceConstants.DATABASE_EXCEPTION).build();
+		System.out.println(">>>> authorizationResult:"+authorizationResult);
+		System.out.println(">>>> rolesSet:"+rolesSet);
+		// DB exception occurred - internal server error - 503
+		if (AttendanceConstants.DATABASE_EXCEPTION.equals(authorizationResult)) {
+			ACCESS_DENIED = Response.status(503).entity(AttendanceConstants.DATABASE_EXCEPTION).build();
 			isAuthorized = false;
 		}
-		//Authentication was successful was the user is not authorised to view this content - 403 Forbidden
-		else if(AttendanceConstants.ROLE_NOT_ALLOWED.equals(authorizationResult)) {
-			String message =AttendanceConstants.ACCESS_DENIED + authorizationResult;
-			ACCESS_DENIED = Response.status(403)
-					.entity(message).build();
+		// Authentication was successful, the user is not authorised to view this
+		// content - 403 Forbidden
+		else if (AttendanceConstants.ROLE_NOT_ALLOWED.equals(authorizationResult)) {
+			String message = AttendanceConstants.ACCESS_DENIED + authorizationResult;
+			ACCESS_DENIED = Response.status(403).entity(message).build();
 			isAuthorized = false;
+		}
+		// Authentication was successful, user is first time logging - 400
+		// if Roles.FIRST_TIME_USER present in the roleSet then authorization = true.
+		else if (AttendanceConstants.MULTIPLE_USERS.equals(authorizationResult)
+				&& rolesSet.contains(Roles.FIRST_TIME_USER)) {
+			isAuthorized = true;
+
 		}
 		// Authentication of the user failed(wrong id, password) - 401 UnAuthorized
-		else if(!AttendanceConstants.PASSED.equals(authorizationResult)) {
-			String message =AttendanceConstants.ACCESS_DENIED  + authorizationResult;
-			ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED)
-					.entity(message).build();
+		else if (!AttendanceConstants.PASSED.equals(authorizationResult)) {
+			String message = AttendanceConstants.ACCESS_DENIED + authorizationResult;
+			ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED).entity(message).build();
 			isAuthorized = false;
 		}
 		return isAuthorized;

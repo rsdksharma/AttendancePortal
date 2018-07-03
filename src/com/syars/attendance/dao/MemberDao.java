@@ -3,6 +3,8 @@ package com.syars.attendance.dao;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -10,136 +12,165 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoServerException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.WriteResult;
+import com.syars.attendance.constants.AttendanceConstants;
+import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.constants.DBConstants;
 import com.syars.attendance.exceptions.DatabaseException;
+import com.syars.attendance.mappers.MemberMapper;
 import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.MemberVO;
 
 public class MemberDao {
 	private DBCollection col = null;
-	
+	// AttendanceMapper mapper = new AttendanceMapper();
+	MemberMapper mapper = new MemberMapper();
+
+	// TODO return created member id
 	public void createMember(MemberVO memberVo) throws DatabaseException {
 		try {
-			col = MongoDBUtils.getMongoDBCollection("RSMembers");
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+
+			// createDBObject. This object will be in JSON format.
+			DBObject memberDoc = mapper.doMap(memberVo);
 			
-			//createDBObject. This object will be in JSON format.
-			DBObject memberDoc = mapToDBObject(memberVo);
-			
-			//insert created feedback in MongoDB.
+			// TODO create unique memberId and append to memberDoc
+			memberDoc.put(DBCollectionAttributes.MEMBER_ID, createUniqueMemberId(memberVo));
+
+			// insert created memberDoc in MongoDB.
 			WriteResult writeResult = col.insert(memberDoc);
-			if(writeResult.wasAcknowledged()) {
+			if (writeResult.wasAcknowledged()) {
 				System.out.println(">>>>insertion acknowledged");
 			}
-		
-		}catch(MongoTimeoutException e) {
+
+		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
-		}catch(MongoServerException e) {
+		} catch (MongoServerException e) {
 			throw new DatabaseException("MongoServerException", e);
-		}
-		finally {
-			//close resources
+		} finally {
+			// close resources
 			MongoDBUtils.releaseResource();
 		}
+	}
+
+	private String createUniqueMemberId(MemberVO memberVo) {
+		StringBuilder memberId = new StringBuilder();
+		memberId.append(AttendanceConstants.SECUNDERABAD_BRANCH);
+		memberId.append(AttendanceConstants.UNDERSCORE);
+		if(StringUtils.isNotBlank(memberVo.getFullName())) {
+			StringUtils.split(memberVo.getFullName(), " ");
+			
+		}
+			
+		// TODO currently returning default
+		return AttendanceConstants.DEFAULT_MEMBER_ID;
 	}
 
 	public Map<String, MemberVO> getAllMembers() throws DatabaseException {
 		Map<String, MemberVO> memberMap = new HashMap<String, MemberVO>();
 		try {
-			col = MongoDBUtils.getMongoDBCollection("RSMembers");
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
 			DBCursor cursor = col.find();
-			while(cursor.hasNext()){
+			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
-				memberMap.put(result.get("Mobile").toString(), map(result, new MemberVO()));
+				memberMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(),
+						mapper.doMap(result, new MemberVO()));
 			}
-		}catch(MongoTimeoutException e) {
+		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
-		}catch(MongoServerException e) {
+		} catch (MongoServerException e) {
 			throw new DatabaseException("MongoServerException", e);
-		}
-		finally {
-			//close resources
+		} finally {
+			// close resources
 			MongoDBUtils.releaseResource();
 		}
 		return memberMap;
 	}
-	
+
 	public MemberVO getMember(String memberId) throws DatabaseException {
 		return getAllMembers().get(memberId);
 	}
-	
 
-	public int updateMember(MemberVO memberVo) throws DatabaseException{
+	public int getMemberCount() throws DatabaseException {
+		int count = 0;
+		try {
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+			if (col.getStats() != null) {
+				count = col.getStats().getInt(DBConstants.RECORD_COUNT);
+			}
+		} catch (MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
+		} catch (MongoServerException e) {
+			throw new DatabaseException("MongoServerException", e);
+		} finally {
+			// close resources
+			MongoDBUtils.releaseResource();
+		}
+
+		return count;
+	}
+
+	public int updateMember(MemberVO memberVo) throws DatabaseException {
 		int updateResult = 0;
 		try {
-			col = MongoDBUtils.getMongoDBCollection("RSMembers");
-			
-			//createDBObject. This object will be in JSON format.
-			DBObject memberDoc = mapToDBObject(memberVo);
-			
-			//create query
-			DBObject query = BasicDBObjectBuilder.start().add("Mobile", (memberVo.getMobileNumber())).get();
-			
-			//insert created feedback in MongoDB.
-			WriteResult writeResult = col.update(query,memberDoc);
-			System.out.println("write result for update member:"+writeResult);
-			if(writeResult.isUpdateOfExisting()) {
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+
+			// createDBObject. This object will be in JSON format.
+			DBObject memberDoc = mapper.doMap(memberVo);
+
+			// create query
+			DBObject query = BasicDBObjectBuilder.start()
+					.add(DBCollectionAttributes.MOBILE_NUMBER, (memberVo.getMobileNumber())).get();
+
+			// insert created feedback in MongoDB.
+			WriteResult writeResult = col.update(query, memberDoc);
+			System.out.println("write result for update member:" + writeResult);
+			if (writeResult.isUpdateOfExisting()) {
 				updateResult = 1;
 			}
-		
-		}catch(MongoTimeoutException e) {
+
+		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
-		}catch(MongoServerException e) {
+		} catch (MongoServerException e) {
 			throw new DatabaseException("MongoServerException", e);
-		}
-		finally {
-			//close resources
+		} finally {
+			// close resources
 			MongoDBUtils.releaseResource();
 		}
 		return updateResult;
 	}
-	
-	public void deleteMember(String memberId) throws DatabaseException{
+
+	public void deleteMember(String memberId) throws DatabaseException {
 		try {
-			col = MongoDBUtils.getMongoDBCollection("RSMembers");
-			DBObject query = BasicDBObjectBuilder.start().add("Mobile", memberId).get();
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MOBILE_NUMBER, memberId).get();
 			col.remove(query);
-		}catch(MongoTimeoutException e) {
+		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
-		}catch(MongoServerException e) {
+		} catch (MongoServerException e) {
 			throw new DatabaseException("MongoServerException", e);
-		}
-		finally {
-			//close resources
+		} finally {
+			// close resources
 			MongoDBUtils.releaseResource();
 		}
 	}
-	private DBObject mapToDBObject(MemberVO memberVo) {
-		int count = 0;
-		if(col.getStats() != null) {
-			count = col.getStats().getInt(DBConstants.RECORD_COUNT);
-		}
-		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
 
-		//docBuilder.append("_id", "MEMBER_"+count); //think for creating unique id
-		//docBuilder.append("Branch UID", memberVo.getBranchUIDNumber());
-		//docBuilder.append("Global UID", memberVo.getGlobalUIDNumber());
-		docBuilder.append("FullName", memberVo.getFullName());
-		docBuilder.append("Mobile", memberVo.getMobileNumber());
-		docBuilder.append("Email", memberVo.getEmailId());
-
-		return docBuilder.get();
-	}
-	
-	private MemberVO map(DBObject result, MemberVO memberVo) {
-		//memberVo.setBranchUIDNumber(result.get("").toString());
-		//memberVo.setBranch(result.get("").toString());
-		//memberVo.setDateOfBirth(result.get("").toString());
-		memberVo.setFullName(result.get("FullName").toString());
-		memberVo.setMobileNumber(result.get("Mobile").toString());
-		memberVo.setEmailId(result.get("Email").toString());
-		//memberVo.setFirstName(result.get("").toString());
-		//memberVo.setLastName(result.get("").toString());
-		return memberVo;
-	}
+	/*
+	 * public boolean updateMemberById(String memberId) throws DatabaseException {
+	 * boolean wasUpdated = false; try { col =
+	 * MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+	 * DBObject query =
+	 * BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, memberId)
+	 * .get(); DBCursor cursor = col.find(query); WriteResult updateResult = null;
+	 * if(cursor.size() > 0) { DBObject existingMember = cursor.next();
+	 * existingMember.put(DBCollectionAttributes.IS_USER, true); updateResult =
+	 * col.update(query,existingMember); } if(updateResult.isUpdateOfExisting()) {
+	 * wasUpdated = true; } return wasUpdated; }catch (MongoTimeoutException e) {
+	 * throw new DatabaseException("MongoTimeoutException", e); } catch
+	 * (MongoServerException e) { throw new
+	 * DatabaseException("MongoServerException", e); } finally { // close resources
+	 * MongoDBUtils.releaseResource(); }
+	 * 
+	 * }
+	 */
 
 }
