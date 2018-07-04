@@ -61,12 +61,12 @@ public class UserResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_HTML)
 	public Response registerMemberAsUser(UserVO userVo) {
-		int result = userService.registerMemberAsUser(userVo);
+		String createdUserId = userService.registerMemberAsUser(userVo);
 		Response response = Response.status(500).entity("User Could not be Registered.").build();
-		if (result > 0) {
+		if (createdUserId != null) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(userVo.getMemberId()).build().toString());
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(createdUserId).build().toString());
 			response = Response.status(201).entity("User Registered. Resource path is:\n" + selfLink.getHref()).build();
 		}
 		return response;

@@ -18,14 +18,14 @@ public class MemberService {
 		}
 	}
 
-	public int createMember(MemberVO memberVo) {
-		int result = 1;
+	public String createMember(MemberVO memberVo) {
+		String createdMemberId = null;
 		try {
-			memberDao.createMember(memberVo);
+			createdMemberId = memberDao.createMember(memberVo);
 		} catch (DatabaseException e) {
-			result = 0;
+			createdMemberId = null;
 		}
-		return result;
+		return createdMemberId;
 	}
 
 	public Map<String, MemberVO> getAllMembers() {

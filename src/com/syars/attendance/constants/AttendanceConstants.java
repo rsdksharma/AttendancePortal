@@ -15,7 +15,8 @@ public class AttendanceConstants {
 	public static final String EMPTY_STRING = "";
 	public static final String MULTIPLE_USERS = "Multiple Users";
 	public static final String NO_PASSWORD = "Password Not Set";
-	public static final String SECUNDERABAD_BRANCH = "SEC";
+	public static final String BRANCH_CODE_ = "SEC_";
 	public static final Object UNDERSCORE = "_";
+	public static final Object USER_ = "USER_";
 
 }

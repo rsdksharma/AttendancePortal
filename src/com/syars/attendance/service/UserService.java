@@ -44,14 +44,14 @@ public class UserService {
 		}
 	}
 
-	public int registerMemberAsUser(UserVO userVo) {
-		int result = 1;
+	public String registerMemberAsUser(UserVO userVo) {
+		String createdUserId = null;
 		try {
-			userDao.registerMemberAsUser(userVo);
+			createdUserId = userDao.registerMemberAsUser(userVo);
 		} catch (DatabaseException e) {
-			result = 0;
+			createdUserId = null;
 		}
-		return result;
+		return createdUserId;
 	}
 
 	public Map<String, UserVO> getAllUsers() {

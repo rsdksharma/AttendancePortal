@@ -2,6 +2,8 @@ package com.syars.attendance.dao;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +28,8 @@ public class MemberDao {
 	MemberMapper mapper = new MemberMapper();
 
 	// TODO return created member id
-	public void createMember(MemberVO memberVo) throws DatabaseException {
+	public String createMember(MemberVO memberVo) throws DatabaseException {
+		String createdMemberId = null;
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
 
@@ -34,11 +37,13 @@ public class MemberDao {
 			DBObject memberDoc = mapper.doMap(memberVo);
 			
 			// TODO create unique memberId and append to memberDoc
-			memberDoc.put(DBCollectionAttributes.MEMBER_ID, createUniqueMemberId(memberVo));
+			String memberId = createUniqueMemberId(memberVo);
+			memberDoc.put(DBCollectionAttributes.MEMBER_ID, memberId);
 
 			// insert created memberDoc in MongoDB.
 			WriteResult writeResult = col.insert(memberDoc);
 			if (writeResult.wasAcknowledged()) {
+				createdMemberId = memberId;
 				System.out.println(">>>>insertion acknowledged");
 			}
 
@@ -50,19 +55,19 @@ public class MemberDao {
 			// close resources
 			MongoDBUtils.releaseResource();
 		}
+		return createdMemberId;
 	}
 
 	private String createUniqueMemberId(MemberVO memberVo) {
-		StringBuilder memberId = new StringBuilder();
-		memberId.append(AttendanceConstants.SECUNDERABAD_BRANCH);
-		memberId.append(AttendanceConstants.UNDERSCORE);
-		if(StringUtils.isNotBlank(memberVo.getFullName())) {
-			StringUtils.split(memberVo.getFullName(), " ");
-			
-		}
-			
-		// TODO currently returning default
-		return AttendanceConstants.DEFAULT_MEMBER_ID;
+		String uniqueID = UUID.randomUUID().toString();
+		StringTokenizer tokenizer = new StringTokenizer(uniqueID, "-");
+		StringBuilder builder = new StringBuilder();
+		builder.append(AttendanceConstants.BRANCH_CODE_);
+		String memberId = builder.append(tokenizer.nextToken()).toString();
+		System.out.println(">>>>uniqueID:"+uniqueID);
+		System.out.println(">>>>memberId:"+memberId);
+		
+		return memberId.toString();
 	}
 
 	public Map<String, MemberVO> getAllMembers() throws DatabaseException {

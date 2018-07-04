@@ -2,6 +2,7 @@ package com.syars.attendance.dao;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import com.mongodb.BasicDBObjectBuilder;
@@ -60,23 +61,25 @@ public class UserDao {
 		return user;
 	}
 
-	public void registerMemberAsUser(UserVO userVo) throws DatabaseException {
+	public String registerMemberAsUser(UserVO userVo) throws DatabaseException {
+		String createdUserId = null;
 		try {
 			if (!isMemberRegistered(userVo.getMemberId())) {
 				throw new DatabaseException("Member not registered", null);
 			}
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.USER_COLLECTION);
 			DBObject userDoc = mapper.doMap(userVo);
+			String userId = createUniqueUserId(userVo);
 			if(userDoc.containsField(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED)) {
 				userDoc.removeField(DBCollectionAttributes.USER_ID);
 			}
 			else {
-				userDoc.put(DBCollectionAttributes.USER_ID, createUniqueUserId(userVo));
+				userDoc.put(DBCollectionAttributes.USER_ID, userId);
 			}
 			// insert user in RSUserCollection
 			WriteResult writeResult = col.insert(userDoc);
-			if (!writeResult.wasAcknowledged()) {
-				throw new DatabaseException("could not register member as user", null);
+			if (writeResult.wasAcknowledged()) {
+				createdUserId = userId;
 			}
 
 		} catch (MongoTimeoutException e) {
@@ -88,14 +91,20 @@ public class UserDao {
 			// close resources
 			MongoDBUtils.releaseResource();
 		}
+		return createdUserId;
 
 	}
 
-	private Object createUniqueUserId(UserVO userVo) {
+	private String createUniqueUserId(UserVO userVo) {
 		String uniqueID = UUID.randomUUID().toString();
+		StringTokenizer tokenizer = new StringTokenizer(uniqueID, "-");
+		tokenizer.nextToken();
+		StringBuilder builder = new StringBuilder();
+		builder.append(AttendanceConstants.USER_);
+		String userId = builder.append(tokenizer.nextToken()).toString();
 		System.out.println(">>>>uniqueID:"+uniqueID);
-		// TODO create unique userId, it is default as of now
-		return AttendanceConstants.DEFAULT_USER_ID;
+		System.out.println(">>>>userId:"+userId);
+		return userId;
 	}
 
 	private boolean isMemberRegistered(String memberId) throws DatabaseException {
