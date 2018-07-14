@@ -102,7 +102,6 @@ public class UserDao {
 		StringBuilder builder = new StringBuilder();
 		builder.append(AttendanceConstants.USER_);
 		String userId = builder.append(tokenizer.nextToken()).toString();
-		System.out.println(">>>>uniqueID:"+uniqueID);
 		System.out.println(">>>>userId:"+userId);
 		return userId;
 	}

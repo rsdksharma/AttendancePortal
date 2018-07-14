@@ -2,10 +2,6 @@ package com.syars.attendance.dao;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.UUID;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
@@ -24,19 +20,16 @@ import com.syars.attendance.vo.MemberVO;
 
 public class MemberDao {
 	private DBCollection col = null;
-	// AttendanceMapper mapper = new AttendanceMapper();
 	MemberMapper mapper = new MemberMapper();
 
-	// TODO return created member id
 	public String createMember(MemberVO memberVo) throws DatabaseException {
 		String createdMemberId = null;
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
 
 			// createDBObject. This object will be in JSON format.
-			DBObject memberDoc = mapper.doMap(memberVo);
-			
-			// TODO create unique memberId and append to memberDoc
+			DBObject memberDoc = mapper.doMap(memberVo, BasicDBObjectBuilder.start().get());
+
 			String memberId = createUniqueMemberId(memberVo);
 			memberDoc.put(DBCollectionAttributes.MEMBER_ID, memberId);
 
@@ -44,7 +37,6 @@ public class MemberDao {
 			WriteResult writeResult = col.insert(memberDoc);
 			if (writeResult.wasAcknowledged()) {
 				createdMemberId = memberId;
-				System.out.println(">>>>insertion acknowledged");
 			}
 
 		} catch (MongoTimeoutException e) {
@@ -59,15 +51,16 @@ public class MemberDao {
 	}
 
 	private String createUniqueMemberId(MemberVO memberVo) {
-		String uniqueID = UUID.randomUUID().toString();
+		/*String uniqueID = UUID.randomUUID().toString();
 		StringTokenizer tokenizer = new StringTokenizer(uniqueID, "-");
 		StringBuilder builder = new StringBuilder();
+		builder.append(AttendanceConstants.MEMBER_PREFIX);
 		builder.append(AttendanceConstants.BRANCH_CODE_);
 		String memberId = builder.append(tokenizer.nextToken()).toString();
-		System.out.println(">>>>uniqueID:"+uniqueID);
-		System.out.println(">>>>memberId:"+memberId);
-		
-		return memberId.toString();
+		System.out.println(">>>>memberId:" + memberId);*/
+
+		return AttendanceConstants.MEMBER_PREFIX + AttendanceConstants.BRANCH_CODE_
+				+ MongoDBUtils.getNextValue(DBCollectionAttributes.MEMBER_SEQUENCE);
 	}
 
 	public Map<String, MemberVO> getAllMembers() throws DatabaseException {
@@ -119,20 +112,17 @@ public class MemberDao {
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
 
-			// createDBObject. This object will be in JSON format.
-			DBObject memberDoc = mapper.doMap(memberVo);
-
 			// create query
 			DBObject query = BasicDBObjectBuilder.start()
-					.add(DBCollectionAttributes.MOBILE_NUMBER, (memberVo.getMobileNumber())).get();
-
-			// insert created feedback in MongoDB.
-			WriteResult writeResult = col.update(query, memberDoc);
-			System.out.println("write result for update member:" + writeResult);
-			if (writeResult.isUpdateOfExisting()) {
+					.add(DBCollectionAttributes.MEMBER_ID, (memberVo.getMemberID())).get();
+			//find existing member
+			DBCursor cursor = col.find(query);
+			while(cursor.hasNext()) {
+				DBObject existingMember = cursor.next();
+				col.update(query, mapper.doMap(memberVo, existingMember));
 				updateResult = 1;
+				break;
 			}
-
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
 		} catch (MongoServerException e) {

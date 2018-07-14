@@ -18,5 +18,6 @@ public class AttendanceConstants {
 	public static final String BRANCH_CODE_ = "SEC_";
 	public static final Object UNDERSCORE = "_";
 	public static final Object USER_ = "USER_";
+	public static final Object MEMBER_PREFIX = "M";
 
 }

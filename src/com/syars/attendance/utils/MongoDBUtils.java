@@ -1,5 +1,6 @@
 package com.syars.attendance.utils;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -7,8 +8,6 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.constants.DBConstants;
-import com.syars.attendance.vo.MemberVO;
-import com.syars.attendance.vo.UserVO;
 
 public class MongoDBUtils {
 	private static MongoClient client = null;
@@ -36,32 +35,23 @@ public class MongoDBUtils {
 		}
 	}
 
-	public static DBObject createUserDBObject(int count, UserVO userVo) {
+	public static void createSequence(String sequenceName) {
+		DBCollection col = MongoDBUtils.getMongoDBCollection(sequenceName);
 		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
-
-		// docBuilder.append("_id", count);
-		docBuilder.append(DBCollectionAttributes.USER_ID, userVo.getUserId());
-		docBuilder.append(DBCollectionAttributes.PASSWORD, userVo.getPassword());
-		docBuilder.append(DBCollectionAttributes.USER_ROLE, userVo.getUserRole());
-
-		return docBuilder.get();
+		docBuilder.append("_id", "item_id");
+		docBuilder.append("sequence_value", 0);
+		col.insert(docBuilder.get());
 	}
 
-	public static DBObject createMemberDBObject(DBCollection col, MemberVO memberVo) {
-		int count = 0;
-		if (col.getStats() != null) {
-			count = col.getStats().getInt(DBConstants.RECORD_COUNT);
-		}
-		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
+	public static int getNextValue(String sequenceName) {
+		DBCollection col = MongoDBUtils.getMongoDBCollection(sequenceName);
+		BasicDBObject find = new BasicDBObject();
+		find.put("_id", "item_id"); // sequenceOfName = item_id
+		BasicDBObject update = new BasicDBObject();
+		update.put("$inc", new BasicDBObject(DBCollectionAttributes.SEQUENCE_VALUE, 1));
+		DBObject obj = col.findAndModify(find, update);
 
-		// docBuilder.append("_id", "MEMBER_"+count); //think for creating unique id
-		// docBuilder.append("Branch UID", memberVo.getBranchUIDNumber());
-		// docBuilder.append("Global UID", memberVo.getGlobalUIDNumber());
-		docBuilder.append(DBCollectionAttributes.FULL_NAME, memberVo.getFullName());
-		docBuilder.append(DBCollectionAttributes.MOBILE_NUMBER, memberVo.getMobileNumber());
-		docBuilder.append(DBCollectionAttributes.EMAIL_ID, memberVo.getEmailId());
-
-		return docBuilder.get();
+		return (int) obj.get("sequence_value") + 1;
 	}
 
 }
