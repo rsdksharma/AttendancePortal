@@ -3,8 +3,12 @@ package com.syars.attendance.constants;
 public class AttendanceConstants {
 	public static final String DEFAULT_USER_ID = "RADHASOAMI";
 	public static final String DEFAULT_MEMBER_ID = "SEC_1038001";
-	
-	//Failure messages
+	public static final String BRANCH_CODE_ = "SEC_";
+	public static final String UNDERSCORE = "_";
+	public static final String USER_ = "USER_";
+	public static final String MEMBER_PREFIX = "M";
+
+	// Failure messages
 	public static final String DATABASE_EXCEPTION = "Database connect exception occured";
 	public static final String DB_EXCEPTION = "DBException";
 	public static final String ACCESS_DENIED = "You are not authorized to access this resource: ";
@@ -15,9 +19,5 @@ public class AttendanceConstants {
 	public static final String EMPTY_STRING = "";
 	public static final String MULTIPLE_USERS = "Multiple Users";
 	public static final String NO_PASSWORD = "Password Not Set";
-	public static final String BRANCH_CODE_ = "SEC_";
-	public static final Object UNDERSCORE = "_";
-	public static final Object USER_ = "USER_";
-	public static final Object MEMBER_PREFIX = "M";
 
 }

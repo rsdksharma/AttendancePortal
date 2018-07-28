@@ -19,6 +19,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.wink.common.model.atom.AtomLink;
 
+import com.syars.attendance.constants.ResourcePathConstants;
 import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.UserService;
 import com.syars.attendance.vo.UserVO;

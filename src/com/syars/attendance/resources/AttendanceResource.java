@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.syars.attendance.constants.AttendanceConstants;
+import com.syars.attendance.constants.ResourcePathConstants;
 import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.PresenceService;
 import com.syars.attendance.vo.PresenceVO;

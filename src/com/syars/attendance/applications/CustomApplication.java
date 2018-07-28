@@ -2,15 +2,14 @@ package com.syars.attendance.applications;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
-import com.syars.attendance.filters.AuthenticationFilter;
+import com.syars.attendance.filters.AuthenticationDynamicFeature;
 
 public class CustomApplication extends ResourceConfig {
 	public CustomApplication() {
-		packages("com.syars.attendance");
-		// register(LoggingFilter.class);
-		// register(GsonMessageBodyHandler.class);
+		packages(true, "com.syars.attendance");
 
 		// Register Auth Filter here
-		register(AuthenticationFilter.class);
+		register(AuthenticationDynamicFeature.class);
+
 	}
 }

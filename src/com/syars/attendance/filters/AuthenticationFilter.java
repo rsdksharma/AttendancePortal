@@ -25,6 +25,11 @@ import com.syars.attendance.service.UserService;
 
 @Provider
 public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequestFilter {
+	
+	public AuthenticationFilter(ResourceInfo resourceInfo) {
+	    super();
+	    this.resourceInfo = resourceInfo;
+	}
 
 	@Context
 	private ResourceInfo resourceInfo;

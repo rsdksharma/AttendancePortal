@@ -1,4 +1,4 @@
-package com.syars.attendance.resources;
+package com.syars.attendance.constants;
 
 public class ResourcePathConstants {
 	
