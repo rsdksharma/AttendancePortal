@@ -1,11 +1,14 @@
 package com.syars.attendance.utils;
 
+import java.util.concurrent.CountDownLatch;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.constants.DBConstants;
 
@@ -19,14 +22,9 @@ public class MongoDBUtils {
 	}
 
 	public static DB initializeDB() {
-		// get MongoDB client named localhost running in port 27017
-		client = new MongoClient(DBConstants.LOCAL_HOST, DBConstants.MONGODB_PORT_NUMBER);
-		/*
-		 * get DB with name local. If local is not present then it will be automatically
-		 * created.
-		 */
-		return client.getDB(DBConstants.MONGODB_LOCAL);
-
+        MongoClientURI uri  = new MongoClientURI(DBConstants.CLOUD_MONGO_DB_URI);
+		client = new MongoClient(uri);
+		return client.getDB(DBConstants.CLOUD_MONGO_DB_NAME);
 	}
 
 	public static void releaseResource() {
@@ -35,12 +33,14 @@ public class MongoDBUtils {
 		}
 	}
 
-	public static void createSequence(String sequenceName) {
+	public static void createSequence(String sequenceName) throws InterruptedException {
+		CountDownLatch latch = new CountDownLatch(1);
 		DBCollection col = MongoDBUtils.getMongoDBCollection(sequenceName);
 		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
 		docBuilder.append("_id", "item_id");
 		docBuilder.append("sequence_value", 0);
 		col.insert(docBuilder.get());
+		latch.await();
 	}
 
 	public static int getNextValue(String sequenceName) {
