@@ -48,11 +48,10 @@ public class MemberService {
 	}
 
 	public int deleteMember(String memberId) {
-		int result = 1;
+		int result = 0;
 		try {
-			memberDao.deleteMember(memberId);
+			result = memberDao.deleteMember(memberId);
 		} catch (DatabaseException e) {
-			result = 0;
 		}
 		return result;
 	}

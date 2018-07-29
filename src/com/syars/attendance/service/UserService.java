@@ -72,14 +72,13 @@ public class UserService {
 		}
 	}
 	
-	public int updateUser(UserVO userVo) {
-		int result = 0;
+	public String updateUser(UserVO userVo) {
 		try {
-			result = userDao.updateUser(userVo);
+			return userDao.updateUser(userVo);
 		} catch (DatabaseException e) {
 			//some logging
 		}
-		return result;
+		return null;
 	}
 
 	public int deleteMember(String userId) {

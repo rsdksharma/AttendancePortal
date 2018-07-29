@@ -3,6 +3,7 @@ package com.syars.attendance.dao;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -28,10 +29,11 @@ public class MemberDao {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
 
 			// createDBObject. This object will be in JSON format.
-			DBObject memberDoc = mapper.doMap(memberVo, BasicDBObjectBuilder.start().get());
+			DBObject memberDoc = mapper.doMap(memberVo);
 
 			String memberId = createUniqueMemberId(memberVo);
 			memberDoc.put(DBCollectionAttributes.MEMBER_ID, memberId);
+			memberDoc.put("_id", memberId);
 
 			// insert created memberDoc in MongoDB.
 			WriteResult writeResult = col.insert(memberDoc);
@@ -71,7 +73,7 @@ public class MemberDao {
 			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
 				memberMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(),
-						mapper.doMap(result, new MemberVO()));
+						mapper.doMap(result));
 			}
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
@@ -115,13 +117,14 @@ public class MemberDao {
 			// create query
 			DBObject query = BasicDBObjectBuilder.start()
 					.add(DBCollectionAttributes.MEMBER_ID, (memberVo.getMemberID())).get();
-			//find existing member
-			DBCursor cursor = col.find(query);
-			while(cursor.hasNext()) {
-				DBObject existingMember = cursor.next();
-				col.update(query, mapper.doMap(memberVo, existingMember));
+			
+			// append $set operator to update passed fields
+			DBObject userDoc = new BasicDBObject();
+			userDoc.put("$set", mapper.doMap(memberVo));
+			
+			WriteResult result = col.update(query, userDoc);
+			if(result.isUpdateOfExisting()) {
 				updateResult = 1;
-				break;
 			}
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
@@ -134,11 +137,15 @@ public class MemberDao {
 		return updateResult;
 	}
 
-	public void deleteMember(String memberId) throws DatabaseException {
+	public int deleteMember(String memberId) throws DatabaseException {
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
-			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MOBILE_NUMBER, memberId).get();
-			col.remove(query);
+			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, memberId).get();
+			WriteResult result = col.remove(query);
+			if(result.isUpdateOfExisting()) {
+				return 1;
+			}
+			// TODO delete associated user
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
 		} catch (MongoServerException e) {
@@ -147,6 +154,7 @@ public class MemberDao {
 			// close resources
 			MongoDBUtils.releaseResource();
 		}
+		return 0;
 	}
 
 	/*

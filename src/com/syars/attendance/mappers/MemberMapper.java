@@ -4,105 +4,117 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.vo.MemberVO;
 
 public class MemberMapper {
 
-	// Forward mapping - MemberVO to DBObject
-	public DBObject doMap(MemberVO memberVo, DBObject dbObject) {
+	/**
+	 * Forward mapping for member - MemberVO to DBObject
+	 * @param memberVo
+	 * @param dbObject
+	 * @return
+	 */
+	public DBObject doMap(MemberVO memberVo) {
 
+		BasicDBObject memberDocument = new BasicDBObject();
 		if (StringUtils.isNotEmpty(memberVo.getFullName())) {
-			dbObject.put(DBCollectionAttributes.FULL_NAME, memberVo.getFullName());
+			memberDocument.append(DBCollectionAttributes.FULL_NAME, memberVo.getFullName());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getMobileNumber())) {
-			dbObject.put(DBCollectionAttributes.MOBILE_NUMBER, memberVo.getMobileNumber());
+			memberDocument.append(DBCollectionAttributes.MOBILE_NUMBER, memberVo.getMobileNumber());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getEmailId())) {
-			dbObject.put(DBCollectionAttributes.EMAIL_ID, memberVo.getEmailId());
+			memberDocument.append(DBCollectionAttributes.EMAIL_ID, memberVo.getEmailId());
 		}
 		if (memberVo.getDateOfBirth() != null) {
-			dbObject.put(DBCollectionAttributes.DATE_OF_BIRTH, memberVo.getDateOfBirth());
+			memberDocument.append(DBCollectionAttributes.DATE_OF_BIRTH, memberVo.getDateOfBirth());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getFirstName())) {
-			dbObject.put(DBCollectionAttributes.FIRST_NAME, memberVo.getFirstName());
+			memberDocument.append(DBCollectionAttributes.FIRST_NAME, memberVo.getFirstName());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getLastName())) {
-			dbObject.put(DBCollectionAttributes.LAST_NAME, memberVo.getLastName());
+			memberDocument.append(DBCollectionAttributes.LAST_NAME, memberVo.getLastName());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getFathersName())) {
-			dbObject.put(DBCollectionAttributes.FATHER_NAME, memberVo.getFathersName());
+			memberDocument.append(DBCollectionAttributes.FATHER_NAME, memberVo.getFathersName());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getMothersName())) {
-			dbObject.put(DBCollectionAttributes.MOTHER_NAME, memberVo.getMothersName());
+			memberDocument.append(DBCollectionAttributes.MOTHER_NAME, memberVo.getMothersName());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getBranch())) {
-			dbObject.put(DBCollectionAttributes.BRANCH, memberVo.getBranch());
+			memberDocument.append(DBCollectionAttributes.BRANCH, memberVo.getBranch());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getBranchID())) {
-			dbObject.put(DBCollectionAttributes.BRANCH_ID, memberVo.getBranchID());
+			memberDocument.append(DBCollectionAttributes.BRANCH_ID, memberVo.getBranchID());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getMemberID())) {
-			dbObject.put(DBCollectionAttributes.MEMBER_ID, memberVo.getMemberID());
+			memberDocument.append(DBCollectionAttributes.MEMBER_ID, memberVo.getMemberID());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getAadharID())) {
-			dbObject.put(DBCollectionAttributes.AADHAR_ID, memberVo.getAadharID());
+			memberDocument.append(DBCollectionAttributes.AADHAR_ID, memberVo.getAadharID());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getGlobalUID())) {
-			dbObject.put(DBCollectionAttributes.GLOBAL_UID, memberVo.getGlobalUID());
+			memberDocument.append(DBCollectionAttributes.GLOBAL_UID, memberVo.getGlobalUID());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getFathersUID())) {
-			dbObject.put(DBCollectionAttributes.FATHER_UID, memberVo.getFathersUID());
+			memberDocument.append(DBCollectionAttributes.FATHER_UID, memberVo.getFathersUID());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getMothersUID())) {
-			dbObject.put(DBCollectionAttributes.MOTHER_UID, memberVo.getMothersUID());
+			memberDocument.append(DBCollectionAttributes.MOTHER_UID, memberVo.getMothersUID());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getPictureId())) {
-			dbObject.put(DBCollectionAttributes.PICTURE_ID, memberVo.getPictureId());
+			memberDocument.append(DBCollectionAttributes.PICTURE_ID, memberVo.getPictureId());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getSignatureId())) {
-			dbObject.put(DBCollectionAttributes.SIGNATURE_ID, memberVo.getSignatureId());
+			memberDocument.append(DBCollectionAttributes.SIGNATURE_ID, memberVo.getSignatureId());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getThumbId())) {
-			dbObject.put(DBCollectionAttributes.THUMB_ID, memberVo.getThumbId());
+			memberDocument.append(DBCollectionAttributes.THUMB_ID, memberVo.getThumbId());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getRegistrationDate())) {
-			dbObject.put(DBCollectionAttributes.REGISTRATION_DATE, memberVo.getRegistrationDate());
+			memberDocument.append(DBCollectionAttributes.REGISTRATION_DATE, memberVo.getRegistrationDate());
 		}
 		if (memberVo.getFirstInitiationDate() != null) {
-			dbObject.put(DBCollectionAttributes.FIRST_INITIATION_DT, memberVo.getFirstInitiationDate());
+			memberDocument.append(DBCollectionAttributes.FIRST_INITIATION_DT, memberVo.getFirstInitiationDate());
 		}
 		if (memberVo.getSecondInitiationDate() != null) {
-			dbObject.put(DBCollectionAttributes.SECOND_INITIATION_DT, memberVo.getSecondInitiationDate());
+			memberDocument.append(DBCollectionAttributes.SECOND_INITIATION_DT, memberVo.getSecondInitiationDate());
 		}
 		if (memberVo.isInitiatedFlag()) {
-			dbObject.put(DBCollectionAttributes.INITIATED_FLAG, memberVo.isInitiatedFlag());
+			memberDocument.append(DBCollectionAttributes.INITIATED_FLAG, memberVo.isInitiatedFlag());
 		}
 		if (memberVo.isJigyashuFlag()) {
-			dbObject.put(DBCollectionAttributes.JIGYASHU_FLAG, memberVo.isJigyashuFlag());
+			memberDocument.append(DBCollectionAttributes.JIGYASHU_FLAG, memberVo.isJigyashuFlag());
 		}
 		if (memberVo.isStudentFlag()) {
-			dbObject.put(DBCollectionAttributes.STUDENT_FLAG, memberVo.isStudentFlag());
+			memberDocument.append(DBCollectionAttributes.STUDENT_FLAG, memberVo.isStudentFlag());
 		}
 		if (memberVo.isUserAlsoFlag()) {
-			dbObject.put(DBCollectionAttributes.IS_USER, memberVo.isUserAlsoFlag());
+			memberDocument.append(DBCollectionAttributes.IS_USER, memberVo.isUserAlsoFlag());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getQualification())) {
-			dbObject.put(DBCollectionAttributes.QUALIFICATION, memberVo.getQualification());
+			memberDocument.append(DBCollectionAttributes.QUALIFICATION, memberVo.getQualification());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getSpecialization())) {
-			dbObject.put(DBCollectionAttributes.SPECIALIZATION, memberVo.getSpecialization());
+			memberDocument.append(DBCollectionAttributes.SPECIALIZATION, memberVo.getSpecialization());
 		}
 		if (StringUtils.isNotEmpty(memberVo.getProfession())) {
-			dbObject.put(DBCollectionAttributes.PROFESSION, memberVo.getProfession());
+			memberDocument.append(DBCollectionAttributes.PROFESSION, memberVo.getProfession());
 		}
 
-		return dbObject;
+		return memberDocument;
 	}
 
-	// Reverse mapping - DBObject to MemberVO
-	public MemberVO doMap(DBObject result, MemberVO memberVo) {
+	/**
+	 * Reverse mapping for member - DBObject to MemberVO
+	 * @param DBObject
+	 * @return MemberVO
+	 */
+	public MemberVO doMap(DBObject result) {
+		MemberVO memberVo = new MemberVO();
 		if (result.get(DBCollectionAttributes.MEMBER_ID) != null) {
 			memberVo.setMemberID(result.get(DBCollectionAttributes.MEMBER_ID).toString());
 		}

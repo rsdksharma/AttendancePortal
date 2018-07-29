@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wink.common.model.atom.AtomLink;
 
 import com.syars.attendance.constants.ResourcePathConstants;
@@ -60,7 +61,7 @@ public class UserResource {
 	@POST
 	@RolesAllowed({ Roles.ADMIN })
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response registerMemberAsUser(UserVO userVo) {
 		String createdUserId = userService.registerMemberAsUser(userVo);
 		Response response = Response.status(500).entity("User Could not be Registered.").build();
@@ -80,14 +81,15 @@ public class UserResource {
 	public Response updateUser(UserVO userVo) {
 		
 		Response response = Response.status(500).entity("User Could not be Updated.").build();
-		if(userVo.getMemberId() == null || userVo.getMemberId().isEmpty()) {
-			return Response.status(400).entity("Please enter member id").build();
+		if(StringUtils.isNotBlank(userVo.getMemberId()) && StringUtils.isNotBlank(userVo.getUserId()) &&
+				StringUtils.isNotBlank(userVo.getCustomizedUserId())) {
+			return Response.status(400).entity("Please enter defaultUserId/cusomizedUserId/memberId").build();
 		}
-		int result = userService.updateUser(userVo);
-		if (result > 0) {
+		String result = userService.updateUser(userVo);
+		if (result != null) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(userVo.getMemberId()).build().toString());
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(result).build().toString());
 			response = Response.status(Response.Status.ACCEPTED)
 					.entity("User Updated successfully. Resource path is:\n" + selfLink.getHref()).build();
 		}

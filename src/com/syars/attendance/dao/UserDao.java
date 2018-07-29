@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -43,7 +44,7 @@ public class UserDao {
 				if (result.get(DBCollectionAttributes.PASSWORD) == null) {
 					throw new DatabaseException(AttendanceConstants.NO_PASSWORD, null);
 				}
-				user = mapper.mapCredentials(result, new UserVO());
+				user = mapper.mapCredentials(result);
 			}
 			// multiple users found
 			else if (cursor.size() > 1) {
@@ -70,10 +71,11 @@ public class UserDao {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.USER_COLLECTION);
 			DBObject userDoc = mapper.doMap(userVo);
 			String userId = createUniqueUserId(userVo);
-			if(userDoc.containsField(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED)) {
+			userDoc.put("_id", userVo.getMemberId());
+			if (userDoc.containsField(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED)) {
 				userDoc.removeField(DBCollectionAttributes.USER_ID);
-			}
-			else {
+				userId = userVo.getCustomizedUserId();
+			} else {
 				userDoc.put(DBCollectionAttributes.USER_ID, userId);
 			}
 			// insert user in RSUserCollection
@@ -102,7 +104,7 @@ public class UserDao {
 		StringBuilder builder = new StringBuilder();
 		builder.append(AttendanceConstants.USER_);
 		String userId = builder.append(tokenizer.nextToken()).toString();
-		System.out.println(">>>>userId:"+userId);
+		System.out.println(">>>>userId:" + userId);
 		return userId;
 	}
 
@@ -117,9 +119,9 @@ public class UserDao {
 			// if result found then update member details with IS_USER = true and return
 			// true
 			if (cursor.size() > 0) {
-				DBObject existingMember = cursor.next();
-				existingMember.put(DBCollectionAttributes.IS_USER, true);
-				WriteResult updateResult = col.update(query, existingMember);
+				BasicDBObject update = new BasicDBObject();
+				update.append("$set", new BasicDBObject(DBCollectionAttributes.IS_USER, true));
+				WriteResult updateResult = col.update(query, update);
 				if (updateResult.isUpdateOfExisting()) {
 					return true;
 				}
@@ -140,12 +142,11 @@ public class UserDao {
 	public Map<String, UserVO> getAllUsers() throws DatabaseException {
 		Map<String, UserVO> userMap = new HashMap<String, UserVO>();
 		try {
-			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.USER_COLLECTION);
 			DBCursor cursor = col.find();
 			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
-				userMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(),
-						mapper.doMap(result, new UserVO()));
+				userMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(), mapper.doMap(result));
 			}
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
@@ -162,28 +163,30 @@ public class UserDao {
 		return getAllUsers().get(userId);
 	}
 
-	public int updateUser(UserVO userVo) throws DatabaseException {
-		int updateResult = 0;
+	public String updateUser(UserVO userVo) throws DatabaseException {
+		String updatedId = null;
+
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.USER_COLLECTION);
 
-			// createDBObject. This object will be in JSON format.
-			DBObject userDoc = mapper.doMap(userVo);
-			if (userDoc.containsKey(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED)) {
-				userDoc.removeField(DBCollectionAttributes.USER_ID);
-			}
-
 			// create query
-			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, (userVo.getMemberId()))
-					.get();
-
-			// insert created feedback in MongoDB.
-			WriteResult writeResult = col.update(query, userDoc);
-			System.out.println("write result for update User:" + writeResult);
-			if (writeResult.isUpdateOfExisting()) {
-				updateResult = 1;
+			DBObject query = BasicDBObjectBuilder.start()
+						.add(DBCollectionAttributes.MEMBER_ID, (userVo.getMemberId())).get();
+			// createDBObject from userVo, This object will be in JSON format.
+			DBObject userDoc = mapper.doMap(userVo);
+			
+			//create document to be updated
+			DBObject updateDoc = new BasicDBObject();
+			//if customizedUserId found then delete default one which is USER_ID
+			if (userDoc.containsField(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED)) {
+				updateDoc.put("$unset", new BasicDBObject(DBCollectionAttributes.USER_ID, ""));
 			}
-
+			updateDoc.put("$set", userDoc);
+			// execute update
+			WriteResult writeResult = col.update(query, updateDoc);
+			if (writeResult.isUpdateOfExisting()) {
+				updatedId = userVo.getMemberId();
+			}
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
 		} catch (MongoServerException e) {
@@ -192,14 +195,18 @@ public class UserDao {
 			// close resources
 			MongoDBUtils.releaseResource();
 		}
-		return updateResult;
+		return updatedId;
 	}
 
 	public void deleteUser(String userId) throws DatabaseException {
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.USER_COLLECTION);
 			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.USER_ID, userId).get();
-			col.remove(query);
+			WriteResult result = col.remove(query);
+			if (result.isUpdateOfExisting()) {
+				// return something
+			}
+			// TODO update member with isUserAlso = false
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
 		} catch (MongoServerException e) {

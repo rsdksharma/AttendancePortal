@@ -86,7 +86,7 @@ public class MemberResource {
 		if(result>0) {
 			AtomLink selfLink = new AtomLink();
 			selfLink.setRel("self");
-			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(memberVo.getMobileNumber())
+			selfLink.setHref(uriInfo.getAbsolutePathBuilder().path(memberVo.getMemberID())
 					.build().toString());
 			response = Response.status(Response.Status.ACCEPTED).entity("Member Updated successfully. Resource path is:\n" + selfLink.getHref()).build();
 		}

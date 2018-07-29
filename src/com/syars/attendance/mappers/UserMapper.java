@@ -2,65 +2,81 @@ package com.syars.attendance.mappers;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.vo.UserVO;
 
 public class UserMapper {
 
-	public UserVO mapCredentials(DBObject result, UserVO userVO) {
+	/**
+	 * Reverse mapping for user credentials, DBObject-->UserVO.
+	 * @param DBObject
+	 * @return UserVO
+	 */
+	public UserVO mapCredentials(DBObject result) {
+		UserVO userVo = new UserVO();
 		if (result.get(DBCollectionAttributes.PASSWORD) != null) {
-			userVO.setPassword(result.get(DBCollectionAttributes.PASSWORD).toString());
+			userVo.setPassword(result.get(DBCollectionAttributes.PASSWORD).toString());
 		}
 		if (result.get(DBCollectionAttributes.USER_ROLE) != null) {
-			userVO.setUserRole(result.get(DBCollectionAttributes.USER_ROLE).toString());
+			userVo.setUserRole(result.get(DBCollectionAttributes.USER_ROLE).toString());
 		}
 
-		return userVO;
+		return userVo;
 	}
 
-	public UserVO doMap(DBObject result, UserVO userVO) {
+	/**
+	 * Reverse mapping for UserVO, DBObject-->UserVO.
+	 * @param DBObject
+	 * @return UserVO
+	 */
+	public UserVO doMap(DBObject result) {
+		UserVO userVo = new UserVO();
 		if (result.get(DBCollectionAttributes.MEMBER_ID) != null) {
-			userVO.setMemberId(result.get(DBCollectionAttributes.MEMBER_ID).toString());
+			userVo.setMemberId(result.get(DBCollectionAttributes.MEMBER_ID).toString());
 		}
 		if (result.get(DBCollectionAttributes.USER_ID) != null) {
-			userVO.setUserId(result.get(DBCollectionAttributes.USER_ID).toString());
+			userVo.setUserId(result.get(DBCollectionAttributes.USER_ID).toString());
 		}
 		if (result.get(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED) != null) {
 			boolean isIdCustomized = (boolean) result.get(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED);
-			userVO.setUserIdCustomized(isIdCustomized);
+			userVo.setUserIdCustomized(isIdCustomized);
 			if (isIdCustomized && result.get(DBCollectionAttributes.CUSTOMIZED_USER_ID) != null) {
-				userVO.setCustomizedUserId(result.get(DBCollectionAttributes.CUSTOMIZED_USER_ID).toString());
+				userVo.setCustomizedUserId(result.get(DBCollectionAttributes.CUSTOMIZED_USER_ID).toString());
 			}
 		}
 		if (result.get(DBCollectionAttributes.USER_ROLE) != null) {
-			userVO.setUserRole(result.get(DBCollectionAttributes.USER_ROLE).toString());
+			userVo.setUserRole(result.get(DBCollectionAttributes.USER_ROLE).toString());
 		}
 		if (result.get(DBCollectionAttributes.PASSWORD) != null) {
-			// userVO.setPassword(result.get(DBCollectionAttributes.PASSWORD).toString());
+			 // userVo.setPassword(result.get(DBCollectionAttributes.PASSWORD).toString());
 		}
 
-		return userVO;
+		return userVo;
 	}
 
-	public DBObject doMap(UserVO userVo) {
-		BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
+	/**
+	 * Forward mapping for UserVO, UserVO-->DBObject
+	 * @param UserVO
+	 * @return DBObject
+	 */
+	public BasicDBObject doMap(UserVO userVo) {
+		BasicDBObject userDocument = new BasicDBObject();
 
 		if (StringUtils.isNotBlank(userVo.getMemberId())) {
-			docBuilder.append(DBCollectionAttributes.MEMBER_ID, userVo.getMemberId());
+			userDocument.append(DBCollectionAttributes.MEMBER_ID, userVo.getMemberId());
 		}
 		if (StringUtils.isNotBlank(userVo.getPassword())) {
-			docBuilder.append(DBCollectionAttributes.PASSWORD, userVo.getPassword());
+			userDocument.append(DBCollectionAttributes.PASSWORD, userVo.getPassword());
 		}
 		if (StringUtils.isNotBlank(userVo.getUserRole())) {
-			docBuilder.append(DBCollectionAttributes.USER_ROLE, userVo.getUserRole());
+			userDocument.append(DBCollectionAttributes.USER_ROLE, userVo.getUserRole());
 		}
 		if (StringUtils.isNotBlank(userVo.getCustomizedUserId())) {
-			docBuilder.append(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED, true);
-			docBuilder.append(DBCollectionAttributes.CUSTOMIZED_USER_ID, userVo.getCustomizedUserId());
+			userDocument.append(DBCollectionAttributes.IS_USER_ID_CUSTOMIZED, true);
+			userDocument.append(DBCollectionAttributes.CUSTOMIZED_USER_ID, userVo.getCustomizedUserId());
 		}
-		return docBuilder.get();
+		return userDocument;
 	}
-
 }
