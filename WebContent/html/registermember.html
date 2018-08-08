@@ -1,0 +1,36 @@
+<!--
+Copyright: SYARS
+2018
+
+File Name: registermember.html
+************************************************
+Change Date		Name			Description
+07/08/2018		Deepak S.		Initial Creation
+												 
+************************************************
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Attendance Portal - RegisterMember</title>
+<link rel="stylesheet" href="../css/attendance_portal.css">
+<script src="../js/attendance_portal.js"></script>
+</head>
+<body>
+<h1>Attendance Portal - Register Member</h1>
+
+<form name="inputform" method="post" onsubmit= 'registerMember()'>
+	Full Name:<input type = "text" id = "fullName"><br><br>
+	Mobile Number:<input type = "text" id = "mobileNumber"><br><br>
+	Email Id:<input type = "text" id = "emailId"><br><br>
+	Branch:<input type = "text" id = "branch"><br><br>
+	Fathers Name:<input type = "text" id = "fathersName"><br><br>
+	Mothers Name:<input type = "text" id = "mothersName"><br><br>
+</form>
+<button type = "submit" onclick=registerMember()>Submit</button><br><br>
+<div id = 'response'></div><br>
+<div class="loader" id ='loader'></div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: attendance_portal.css
+************************************************
+Change Date		Name		Description
+08/08/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+@charset "ISO-8859-1";
+
+
+/* this creates interstitial spinning loader. */
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  visibility: hidden;
+  
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

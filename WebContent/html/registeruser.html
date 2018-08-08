@@ -1,0 +1,60 @@
+<!--
+Copyright: SYARS
+2018
+
+File Name: registeruser.html
+************************************************
+Change Date		Name			Description
+07/08/2018		Deepak S.		Initial Creation
+												 
+************************************************
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Attendance Portal - RegisterUser</title>
+<link rel="stylesheet" href="../css/attendance_portal.css">
+<script src="../js/attendance_portal.js"></script>
+</head>
+<body>
+<h1>Attendance Portal - Register Member As User</h1>
+
+<form name="inputform" method="post" onsubmit= 'registerMember()'>
+	Member Id:<input type = "text" id = "memberId"><br><br>
+	User Role:<input type = "text" id = "userRole"><br><br>
+	Password:<input type="password"  id = "password"><br><br>
+	Confirm Password:<input type="password" id = "confirmPassword"><br><br>
+	Is Customized:<input type="checkbox" id = "isCustomized" onclick="myFunction()"><br><br>
+	<div id = "customizedID" style="display:none">
+		<label >Customized User Id:</label>
+		<input type = "text" id = "customizedUserId"><br><br>
+	</div>
+</form>
+<button type = "submit" onclick=handleRegister() id="register">Submit</button>
+<button type = "submit" onclick=handleUpdate() id="update">Update</button><br><br>
+<div id = 'response'></div><br>
+<div class="loader" id ='loader'></div>
+
+<script>
+function myFunction() {
+    var checkBox = document.getElementById("isCustomized");
+    var text = document.getElementById("customizedID");
+    if (checkBox.checked == true){
+        text.style.display = "block";
+    } else {
+       text.style.display = "none";
+    }
+}
+
+function handleRegister(){
+	registerUser("register");
+}
+function handleUpdate(){
+	registerUser("update");
+}
+
+</script>
+</body>
+</html>

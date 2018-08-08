@@ -1,0 +1,73 @@
+District Number|Iteration Number|Story Number|Story Descripton|Acceptance Criteria|Estimate/Hrs
+
+District 6|1|1|Should be Logged in Fit4Life portal|As a team, we want to take up a daily walk of at least 1km and log hours in TCS Fit4Life App, so that it helps our fitness.|13.5
+District 6|1|2|Complete the HTML5 course in Fresco play|As a team, we will individually complete HTML 5 course in Fresco Play, so that we can learn basics of front-end development.|21.5
+District 6|1|3||As a team, we shall discuss and gain knowledge on Agile Terminology.|4.5
+District 6|2|4|Should be Logged in Fit4Life portal|As a team, we want to take up a daily walk of at least 1km and log hours in TCS Fit4Life App, so that it helps our fitness.|13.5
+District 6|2|5|Complete the CSS3 course in Fresco play|As a team, we will individually complete CSS 3 course in Fresco Play, so that we can learn basics of front-end development.|21.5
+District 6|3|6|Complete the Javascript course in Fresco play|As a team, we will individually complete Javascript course in Fresco Play, so that we can learn basics of front-end development.|21.5
+District 6|3|7||As a team we will implement font-end development concepts learned so far.|18
+District 6|4|1|Should be Logged in Fit4Life portal|As a team, we want to take up a daily walk of at least 1km and log hours in TCS Fit4Life App, so that it helps our fitness.|13.5
+District 6|4|2||As a team, we want to finalize the look and feeel of the prototype.|18
+District 6|4|3||As a team, we want to finalize the functionality of the prototype.|18
+District 6|5|1|Should be Logged in Fit4Life portal|As a team, we want to take up a daily walk of at least 1km and log hours in TCS Fit4Life App, so that it helps our fitness.|13.5
+District 6|5|2||As a team, we want to finalize the functionality of the prototype.|18
+
+District 2|1|1||As a team, who is enthusiastic in digital learning, we want to complete at least one course in Fresco play so that we will get familiar with Fresco play Digital Learning|16
+District 2|1|2||As a team member, who works in Agile framework, I want to do a research and understand the below Agile terms. 1. Burn Down Chart 2. Task Board 3. Story|1
+District 2|1|3||As a team member, who works in Agile framework, I want to do a research and understand the below Agile terms. 1. Sprint/Iteration 2. Daily Scrum/Stand up|1
+District 2|1|4||As a team member, who works in Agile framework, I want to do a research and understand the below Agile terms. 1. Sprint planning/Iteration planning|1
+District 2|1|5||As a team member, who works in Agile framework, I want to do a research and understand the below Agile terms. 1. Sprint Review/Demo 2. Sprint Retrospective|2
+District 2|1|6||As a team member, who works in Agile framework, I want to do a research and understand the below Agile terms. 1. Product Backlog 2. Sprint Backlog|2
+District 2|1|7||As a team, we want to conduct a one hour fun activity with Bank team so that team collaboration improves.|5
+District 2|1|8||As a scrum master, I want to identify a tool to maintain the tam's backlog so that we will have a history of the work to be done.|2
+District 2|1|9||As a team, we want to set up a task board so that we can show case the progress of our work daily.|1
+District 2|2|1||As a team  who works in Agile Framework, we want to document and present the research done on Agile terms so that we can demo it.|16
+District 2|2|2||As a team who are health conscious and willing to contribute for FitForLife , would like to walk atleast 6kms per individual in a week|8
+District 2|3|1||As a team who are willing to contribute to Purpose4Life would like to conduct one activity for TATAStrive so that we can log hours contributing to the Purpose4Life|13
+District 2|3|2||As a team who are enthusiastic to learn new technologies wants to learn ReatcJS so that we will gain some knowledge on React and some hands on experience if possible.|5
+District 2|3|3||As a team who are willing to contribute to entire Bank team level wants to prepare a Statistics board that depicts compliance reports of mandatory courses and some important courses so that we can keep it as display in the Zone .|8
+District 2|4|1||As a team who are enthusiastic to learn new technologies wants to learn ReactJS so that we will gain some knowledge on it.|8
+District 2|4|2||As a team who are enthusiastic to learn new technologies wants to learn ReactJS so that we will can have some hands on experience if possible.|8
+District 2|4|3||As a team who are willing to contribute to entire Bank team wants to prepare a Statistics board that depicts compliance reports of mandatory courses and some important courses which ill be helpful during client visits so that we can keep it as display in the Zone.|8
+District 2|4|4||As a team who are willing to contribute to entire Bank team wants to prepare an appreciation board which ill be helpful during client visits so that we can keep it as display in the Zone.|8
+District 2|5|1||As a team who are enthusiastic to learn new technologies wants to learn ReatcJS so that we will gain some knowledge on React and create one page if possible.|18
+District 2|5|1||As a team who is enthusiastic to learn new technologies wants to learn ECMA6 we want to complete this course in Fresco play.|6
+
+District 4|1|1|Should able to complete required courses to make sure that he/she is E0 compliant|As a team, we want to make sure every member in the team is at least E0 compliant in Agile methodology.|63
+District 4|1|2|Every member in team should participate in this event.|As a team, we want to organize cross word puzzle related to agile terms.|9
+District 4|2|1|Everyone should enroll into the course he/she interested in and should complete it.|As a team, we are enthusiastic to learn and want to take up a course in Fresco Play.|36
+District 4|2|2|Everyone should participate in at least two hours of physical activity and should log the efforts in Fit4life.|As a team, who are   health conscious want to take up a fitness activity to be active and healthy.|18
+District 4|2|3|We should prepare the model for Agile methodolgy.|As a team, we want to develop a model which depicts Agile methodology so that it will be helpful to the new joiners.|14
+District 4|3|1|Should able to come up with the design for the application and create the instances of AWS.|As a team, We want to complete the requirements gathering and design of mobile app for bank team communication.|16
+District 4|3|2|Should able to learn required technologies and build mobile app prototype.| As a team, We want to go through the concepts of Angularjs 4 and ionic 3 framework to build the application UI. |18
+District 4|3|3|Should able to learn the concepts of REST API and should build sample middle-ware logic.|As a team, we want to learn REST API to develop the middle-ware logic.|18
+District 4|3|4|Should  able to learn about EC2 instance Database instance and S3 concepts|As a team, we need to learn and understand the concepts of AWS that are required to host the application.|20
+District 4|4|1|Should be able to implement the login feature which enables users to access the mobile application.|As a team, We want to add security feature for the  Bank mobile application by adding login page .|30
+District 4|4|2|Should be able to implement the functionality that enables communication and data management for our application.|As a team, we want to develop a middle ware application  using REST API that provides services to our mobile application.|33
+District 4|4|3|Should be able to create mysql db instance using RDS service.|As a team, we want to create mysql db instance using AWS RDS service as a storage management.|16
+District 4|5|1|Should be able to implement the login feature to know the identity of a user for  accessing  the mobile application.|As a team, We want to add security feature for the  Bank mobile application by adding login page using the Google Firebase platform .|27
+District 4|5|2|Should be able to implement the functionality that enables communication and data management for our application.|As a team, we want to implement post service in  a middle ware application  using REST API that provides services to our mobile application.|31
+District 4|5|3|Should enroll into the course he/she interested in and should complete it.|As an individual, enthusiastic to learn and taken up a course on Scala	Ionic framework  in Fresco Play.|8
+District 4|5|4|Should enroll into the course he/she interested in and should complete it.|As an individual, enthusiastic to learn and taken up a course on Dev Ops  in Fresco Play.|4
+
+District 9|1|1||Digital Course Learning in Fresco Play|15
+District 9|1|2||FitForLife|18
+District 9|1|3||Agile E0 Course in iEvolve|5
+District 9|2|1||Digital Course Learning in Fresco Play|15
+District 9|2|2||Fit4Life activity|20
+District 9|2|3||Ideathon for japanese insurance|24
+District 9|3|1||Logs Outage |24
+District 9|3|2||Restfulwebservices demo|13
+District 9|3|3||E-Poster for Dev and QA collaboration|25
+District 9|3|4||NOdeJS Certification and Demo |8
+District 9|3|5||Digital Course in Fresco Play|20
+District 9|4|1||Restful web services proto type -mail service|24
+District 9|4|2||Fit4Life activity|20
+District 9|4|3||Digital Course in Fresco Play|20
+District 9|4|4||Logs Outage document|13
+District 9|5|1||Digital Course Learning in Fresco Play|13
+District 9|5|2||FitForLife|20
+District 9|5|3||Designing UI using Html5 and css3|17
+District 9|5|4||Automated mail service using Restful web services|13
+District 9|5|5||Prototype using ECMA6 scripts|10
