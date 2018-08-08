@@ -61,7 +61,7 @@ function retrieveAllMembers() {
 		document.getElementById("loader").style.visibility = "visible";
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa(idPassword[0] + ':' + idPassword[1]));
+				+ window.btoa('Role' + ':' + idPassword[2]));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		xhttp.send();
@@ -90,12 +90,12 @@ function displayCount() {
 	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/attendance/count";
 	
 	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserIdPasswordFromCache();
+	var idPassword = retrieveUserDetailsFromCache();
 	if(idPassword != undefined){
 		document.getElementById("loader").style.visibility = "visible";
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa(idPassword[0] + ':' + idPassword[1]));
+				+ window.btoa('Role' + ':' + idPassword[2]));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		xhttp.send();
@@ -125,12 +125,12 @@ function insertAttendance() {
 	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/attendance";
 	
 	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserIdPasswordFromCache();
+	var idPassword = retrieveUserDetailsFromCache();
 	if(idPassword != undefined){
 		document.getElementById("loader").style.visibility = "visible";
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa(idPassword[0] + ':' + idPassword[1]));
+				+ window.btoa('Role' + ':' + idPassword[2]));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		// call service
@@ -165,12 +165,12 @@ function registerMember() {
 	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/members";
 	
 	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserIdPasswordFromCache();
+	var idPassword = retrieveUserDetailsFromCache();
 	if(idPassword != undefined){
 		document.getElementById("loader").style.visibility = "visible";
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa(idPassword[0] + ':' + idPassword[1]));
+				+ window.btoa('Role' + ':' + idPassword[2]));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		// call service
@@ -211,12 +211,12 @@ function registerUser(action) {
 	data.customizedUserId = document.getElementById('customizedUserId').value;
 
 	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserIdPasswordFromCache();
+	var idPassword = retrieveUserDetailsFromCache();
 	if(idPassword != undefined){
 		document.getElementById("loader").style.visibility = "visible";
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa(idPassword[0] + ':' + idPassword[1]));
+				+ window.btoa('Role' + ':' + idPassword[2]));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		// call service
@@ -276,12 +276,13 @@ function logOut() {
 
 
 /* To parse user details saved in cache memory */
-function retrieveUserIdPasswordFromCache(){
+function retrieveUserDetailsFromCache(){
 	// retrieve userId, password from cache
 	var parsedCacheObject = JSON.parse(localStorage.getItem('loggedInMember'));
 	
 	var userId;
 	var password;
+	var role;
 	if(parsedCacheObject == null){
 		return;
 	}
@@ -295,10 +296,13 @@ function retrieveUserIdPasswordFromCache(){
 				userId = val;
 			} else if (key == 'password' && val != null) {
 				password = val;
+			}else if (key == 'userRole' && val != null) {
+				role = val;
 			}
+			
 		}
 	}
-	return [userId,password];
+	return [userId,password,role];
 }
 
 
