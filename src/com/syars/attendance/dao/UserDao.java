@@ -1,3 +1,16 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: UserDao.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.dao;
 
 import java.util.HashMap;
@@ -146,7 +159,15 @@ public class UserDao {
 			DBCursor cursor = col.find();
 			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
-				userMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(), mapper.doMap(result));
+				if(result.get(DBCollectionAttributes.CUSTOMIZED_USER_ID) != null) {
+					userMap.put(result.get(DBCollectionAttributes.CUSTOMIZED_USER_ID).toString(), mapper.doMap(result));
+				}
+				else if(result.get(DBCollectionAttributes.USER_ID) != null) {
+					userMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(), mapper.doMap(result));
+				}
+				else if(result.get(DBCollectionAttributes.MEMBER_ID) != null) {
+					userMap.put(result.get(DBCollectionAttributes.MEMBER_ID).toString(), mapper.doMap(result));
+				}
 			}
 		} catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);

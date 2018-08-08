@@ -1,3 +1,16 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: MongoDBUtils.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.utils;
 
 import java.util.concurrent.CountDownLatch;
@@ -11,6 +24,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.constants.DBConstants;
+import com.ulok.inf.logger.MessageLogger;
 
 public class MongoDBUtils {
 	private static MongoClient client = null;
@@ -52,6 +66,15 @@ public class MongoDBUtils {
 		DBObject obj = col.findAndModify(find, update);
 
 		return (int) obj.get("sequence_value") + 1;
+	}
+	
+	public void testMessageLogger() {
+		MessageLogger.logMethodEntry(this, "testMessageLogger");
+		try {
+			int a = 10/0;
+		}catch(Exception e) {
+			MessageLogger.logError(this, "testMessageLogger", null, "Error log testing", e);
+		}
 	}
 
 }

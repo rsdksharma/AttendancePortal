@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>AttendancePortal</groupId>
 	<artifactId>AttendancePortal</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -98,6 +98,12 @@
 			<artifactId>jersey-client</artifactId>
 			<version>1.9.1</version>
 		</dependency>
-
+		
+		<!-- inf-utils jar self created -->
+		<dependency>
+			<groupId>InfUtils</groupId>
+			<artifactId>InfUtils</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>

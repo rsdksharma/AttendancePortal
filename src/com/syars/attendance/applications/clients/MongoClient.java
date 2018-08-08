@@ -1,37 +1,51 @@
 package com.syars.attendance.applications.clients;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoServerException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.WriteResult;
 import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.dao.MemberDao;
+import com.syars.attendance.dao.PresenceDao;
 import com.syars.attendance.dao.UserDao;
 import com.syars.attendance.exceptions.DatabaseException;
 import com.syars.attendance.mappers.MemberMapper;
 import com.syars.attendance.mappers.UserMapper;
+import com.syars.attendance.resources.MemberResource;
+import com.syars.attendance.utils.DateFormatter;
 import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.MemberVO;
+import com.syars.attendance.vo.PresenceVO;
 import com.syars.attendance.vo.UserVO;
+import com.thoughtworks.xstream.XStream;
 
 public class MongoClient {
+	public static DBCollection col = null;
 
 	public static void main(String[] args) throws Exception {
-		MemberVO memberVo = new MemberVO();
+		/*MemberVO memberVo = new MemberVO();
 		memberVo.setMemberID("MSEC_1");
 		memberVo.setFathersUID("kolkaya");
 		memberVo.setMothersUID("kolkaya");
 		//updateMember(memberVo);
 		MemberDao memberDao = new MemberDao();
 		//memberDao.updateMember(memberVo);
+		*/
 		
 		
 		
-		
-		UserVO userVo = new UserVO();
+		/*UserVO userVo = new UserVO();
 		userVo.setMemberId("MSEC_2");
 		//userVo.setUserIdCustomized(true);
 		userVo.setCustomizedUserId("rsdKsharma");
@@ -39,9 +53,21 @@ public class MongoClient {
 		//userVo.setUserRole("ADMIN");
 		//updateUser(userVo);
 		UserDao userDao = new UserDao();
-		userDao.updateUser(userVo);
+		userDao.updateUser(userVo);*/
+		PresenceDao presenceDao = new PresenceDao();
+		MemberDao memberDao = new MemberDao();
+		UserDao userDao = new UserDao();
+		MemberResource MemberResource = new MemberResource();
+		PresenceVO vo = new PresenceVO();
+		vo.setMemberId("MSEC_9");
+		//presenceDao.insertPresence(vo);
+		//System.out.println(">>>>ALL PRESENCE:"+ new XStream().toXML(presenceDao.retrievePresenceForAll()));
+		//System.out.println(">>>>result:"+ new XStream().toXML(presenceDao.extractUniqueMembers()));
+		System.out.println(">>>>result:"+ new XStream().toXML(MemberResource.getAllMembers()));
+		
 	}
-
+	
+	
 	public static int updateMember(MemberVO memberVo) throws DatabaseException {
 		DBCollection col = null;
 		MemberMapper mapper = new MemberMapper();
@@ -109,5 +135,5 @@ public class MongoClient {
 		}
 		return updateResult;
 	}
-
+	
 }

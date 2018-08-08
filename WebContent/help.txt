@@ -1,0 +1,6 @@
+step 1. create a shortcut of chrome on desktop
+step 2. right click on chrome shortcut-->properties
+step 3. In target field--> go to end-->give one space --> copy below texts at the end
+--allow-file-access-from-files
+
+e.g. "C:\Program Files\Google\Chrome\Application\chrome.exe" --allow-file-access-from-files

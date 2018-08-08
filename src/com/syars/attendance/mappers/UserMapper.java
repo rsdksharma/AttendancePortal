@@ -1,3 +1,16 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: UserMapper.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.mappers;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +63,7 @@ public class UserMapper {
 			userVo.setUserRole(result.get(DBCollectionAttributes.USER_ROLE).toString());
 		}
 		if (result.get(DBCollectionAttributes.PASSWORD) != null) {
-			 // userVo.setPassword(result.get(DBCollectionAttributes.PASSWORD).toString());
+			  userVo.setPassword(result.get(DBCollectionAttributes.PASSWORD).toString());
 		}
 
 		return userVo;

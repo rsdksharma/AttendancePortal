@@ -1,8 +1,22 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: AttendanceResource.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.resources;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.RolesAllowed;
@@ -21,6 +35,7 @@ import com.syars.attendance.constants.AttendanceConstants;
 import com.syars.attendance.constants.ResourcePathConstants;
 import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.PresenceService;
+import com.syars.attendance.utils.DateFormatter;
 import com.syars.attendance.vo.PresenceVO;
 
 @DenyAll
@@ -36,7 +51,7 @@ public class AttendanceResource {
 	@RolesAllowed({ Roles.ADMIN })
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response fetchAttendanceByMemberId(@PathParam("id") String memberId) {
-		Set<Date> presenceMap = presenceService.retrievePresenceByMemberId(memberId);
+		Set<String> presenceMap = presenceService.retrievePresenceByMemberId(memberId);
 		Response response = Response.noContent().entity("No Member found").build();
 		if (presenceMap != null && !presenceMap.isEmpty()) {
 			response = Response.ok().entity(presenceMap).build();
@@ -49,7 +64,7 @@ public class AttendanceResource {
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response retrieveAllAtendance() {
 		
-		Map<String, Set<Date>> presenceMap = presenceService.retrievePresenceForAll();
+		Map<String, Set<String>> presenceMap = presenceService.retrievePresenceForAll();
 		
 		Response response = Response.noContent().entity("No Member found").build();
 		if(presenceMap.containsKey(AttendanceConstants.DB_EXCEPTION)) {
@@ -66,6 +81,7 @@ public class AttendanceResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response insertPresence(PresenceVO presenceVo) {
+		TimeZone.setDefault(TimeZone.getTimeZone("IST"));
 		int result = presenceService.insertPresence(presenceVo);
 		Response response = Response.status(500).entity("Presence Could not be Created.").build();
 		if(result == 503) {
@@ -78,5 +94,26 @@ public class AttendanceResource {
 		}
 		return response;
 	}
-
+	
+	@GET
+	@Path(ResourcePathConstants._COUNT)
+	@RolesAllowed({ Roles.ADMIN })
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public Response getCountForToday() {
+		int count = presenceService.getCount(DateFormatter.formatDate(new Date()));
+		Response response = Response.ok().entity(count).build();
+		
+		return response;
+	}
+	
+	@GET
+	@Path(ResourcePathConstants._COUNT_DATE)
+	@RolesAllowed({ Roles.ADMIN })
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public Response getCountForDate(@PathParam("date") String date) {
+		int count = presenceService.getCount(date);
+		Response response = Response.ok().entity(count).build();
+		
+		return response;
+	}
 }

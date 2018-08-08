@@ -1,3 +1,16 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: DBUtils.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.utils;
 
 import java.sql.Connection;

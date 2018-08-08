@@ -1,3 +1,16 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: Roles.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.constants;
 
 public class Roles {

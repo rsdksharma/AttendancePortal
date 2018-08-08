@@ -1,6 +1,22 @@
+/**
+Copyright: SYARS
+2018
+
+File Name: DBCollectionAttributes.java
+************************************************
+Change Date		Name		Description
+01/07/2018		Deepak S.	Initial Creation
+
+************************************************
+
+*/
+
 package com.syars.attendance.constants;
 
 public class DBCollectionAttributes {
+	
+	//attribute for mongo _id
+	public static final String _ID = "_id";
 	// collections
 	public static final String MEMBER_COLLECTION = "RSMemberCollection";
 	public static final String USER_COLLECTION = "RSUserCollection";
