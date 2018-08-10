@@ -19,20 +19,25 @@ Change Date		Name			Description
 <script src="../js/attendance_portal.js"></script>
 </head>
 <body>
-<h2>Attendance Portal - Home</h2><br>
-<a href="index.html">Go To Home Page</a><br>
-<a href="presence.html">Insert Attendance</a><br>
-<a href="registermember.html">Register Member</a><br>
-<a href="registeruser.html">Register User</a><br><br>
-<button id = "countButton" onclick = displayCount()>Display Count for Today</button><br><br>
-<div id="count">
-</div>
+	<h2>Attendance Portal - Home</h2><br>
 
-<button  onclick = retrieveAllMembers()>Retrieve All Members Testing</button><br><br>
-<div id="retrieveAllMembers">
-</div>
+	<div id='loader'>
+		<div id='bodycontents'>
+			<a href="index.html">Go To Home Page</a><br> 
+			<a href="presence.html">Insert Attendance</a><br> 
+			<a href="registermember.html">Register Member</a><br> 
+			<a href="registeruser.html">Register User</a><br><br>
+			<button id="countButton" onclick=displayCount()>Display Count for Today</button><br><br>
+			<div id="count"></div>
 
-<div id="logout"><button  onclick = logOut()>Logout</button></div><br>
-<div class="loader" id ='loader'></div>
+			<button onclick=retrieveAllMembers()>Retrieve All Members Testing</button><br><br>
+			<div id="retrieveAllMembers"></div>
+
+			<div id="logout">
+				<button onclick=logOut()>Logout</button>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>

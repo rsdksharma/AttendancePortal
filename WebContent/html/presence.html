@@ -19,11 +19,14 @@ Change Date		Name			Description
 <script src="../js/attendance_portal.js"></script>
 </head>
 <body>
-<h1>Attendance Portal - Presence</h1>
-Enter Member Id:<input type = "text" id = "memberid"><br><br>
-<button type = "submit" onclick = insertAttendance()>Submit</button><br><br>
-<div id = 'response'></div><br>
-<div class="loader" id ='loader'></div>
+	<h1>Attendance Portal - Presence</h1>
 
+	<div id='loader'>
+		<div id='bodycontents'>
+			Enter Member Id:<input type="text" id="memberid"><br><br>
+			<button type="submit" onclick=insertAttendance()>Submit</button><br><br>
+			<div id='response'></div><br>
+		</div>
+	</div>
 </body>
 </html>

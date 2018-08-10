@@ -11,6 +11,11 @@ Change Date		Name		Description
 
 */
 
+var BASE_URI = "http://localhost:8080/AttendancePortal-1.0.1-SNAPSHOT";
+var ATTENDANCE_URI = BASE_URI+"/v1/rest/attendance";
+var USERS_URI = BASE_URI+"/v1/rest/users";
+var MEMBERS_URI = BASE_URI+"/v1/rest/members";
+
 /**
 * This file contains the java script functions related to 
 * Attendance Portal functionalities.
@@ -21,7 +26,7 @@ function retrieveAllMembers() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			document.getElementById("loader").style.visibility = "hidden";
+			hideLoader();
 			var APIResponse = xhttp.responseText;
 			APIResponse = JSON.parse(APIResponse);
 			// Put the object into storage
@@ -53,15 +58,15 @@ function retrieveAllMembers() {
 	};
 	
 	var method = "GET";
-	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/members";
+	var url = MEMBERS_URI;
 	
-	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserIdPasswordFromCache();
-	if(idPassword != undefined){
-		document.getElementById("loader").style.visibility = "visible";
+	// retrieve userRole from cache and set to header
+	var userRole = retrieveUserDetailsFromCache();
+	if(userRole != undefined && userRole != null){
+		showLoader();
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + idPassword[2]));
+				+ window.btoa('Role' + ':' + userRole));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		xhttp.send();
@@ -76,7 +81,7 @@ function displayCount() {
 	xhttp.onreadystatechange = function() {
 		var count = document.getElementById('count');
 		if (this.readyState == 4) {
-			document.getElementById("loader").style.visibility = "hidden";
+			hideLoader();
 			if(this.status == 200){
 				console.log("count:" + this.responseText);
 				count.innerHTML = '<p>Count for today is:' + this.responseText;
@@ -87,15 +92,15 @@ function displayCount() {
 		}
 	};
 	var method = "GET";
-	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/attendance/count";
-	
-	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserDetailsFromCache();
-	if(idPassword != undefined){
-		document.getElementById("loader").style.visibility = "visible";
+	var url = ATTENDANCE_URI+"/count";
+
+	// retrieve userRole from cache and set to header
+	var userRole = retrieveUserDetailsFromCache();
+	if(userRole != undefined && userRole != null){
+		showLoader();
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + idPassword[2]));
+				+ window.btoa('Role' + ':' + userRole));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		xhttp.send();
@@ -114,7 +119,7 @@ function insertAttendance() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			document.getElementById("loader").style.visibility = "hidden";
+			hideLoader();
 			console.log("response:" + this.responseText);
 			var message = document.getElementById('response');
 			message.innerHTML = '<p>' + this.responseText;
@@ -122,15 +127,15 @@ function insertAttendance() {
 	};
 	
 	var method = "POST";
-	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/attendance";
+	var url = ATTENDANCE_URI;
 	
-	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserDetailsFromCache();
-	if(idPassword != undefined){
-		document.getElementById("loader").style.visibility = "visible";
+	// retrieve userRole from cache and set to header
+	var userRole = retrieveUserDetailsFromCache();
+	if(userRole != undefined && userRole != null){
+		showLoader();
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + idPassword[2]));
+				+ window.btoa('Role' + ':' + userRole));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		// call service
@@ -154,7 +159,7 @@ function registerMember() {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			// Typical action to be performed when the document is ready:
-			document.getElementById("loader").style.visibility = "hidden";
+			hideLoader();
 			console.log("response:" + this.responseText);
 			var responseMessage = document.getElementById('response');
 			responseMessage.innerHTML = '<p>' + this.responseText;
@@ -162,15 +167,15 @@ function registerMember() {
 	};
 	
 	var method = "POST";
-	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/members";
+	var url = MEMBERS_URI;
 	
-	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserDetailsFromCache();
-	if(idPassword != undefined){
-		document.getElementById("loader").style.visibility = "visible";
+	// retrieve userRole from cache and set to header
+	var userRole = retrieveUserDetailsFromCache();
+	if(userRole != undefined && userRole != null){
+		showLoader();
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + idPassword[2]));
+				+ window.btoa('Role' + ':' + userRole));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		// call service
@@ -183,7 +188,7 @@ function registerMember() {
  * update the user details.
  */
 function registerUser(action) {
-	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/users";
+	var url = USERS_URI;
 	var method;
 	if (action == 'register') {
 		method = "POST";
@@ -195,7 +200,7 @@ function registerUser(action) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			document.getElementById("loader").style.visibility = "hidden";
+			hideLoader();
 			// Typical action to be performed when the document is ready:
 			console.log("response:" + this.responseText);
 			var responseMessage = document.getElementById('response');
@@ -210,13 +215,13 @@ function registerUser(action) {
 	data.password = document.getElementById('password').value;
 	data.customizedUserId = document.getElementById('customizedUserId').value;
 
-	// retrieve userId, password from cache and set to header
-	var idPassword = retrieveUserDetailsFromCache();
-	if(idPassword != undefined){
-		document.getElementById("loader").style.visibility = "visible";
+	// retrieve userRole from cache and set to header
+	var userRole = retrieveUserDetailsFromCache();
+	if(userRole != undefined && userRole != null){
+		showLoader();
 		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + idPassword[2]));
+				+ window.btoa('Role' + ':' + userRole));
 		xhttp.setRequestHeader("Content-Type", "application/json");
 		
 		// call service
@@ -237,12 +242,12 @@ function login() {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			// Typical action to be performed when the document is ready:
-			document.getElementById("loader").style.visibility = "hidden";
+			hideLoader();
 			
 			if (this.status == 200) {
 				var APIResponse = JSON.parse(this.responseText);
 				// Put the object into cache storage
-				localStorage.setItem('loggedInMember', JSON
+				localStorage.setItem('loggedInUser', JSON
 						.stringify(APIResponse));
 
 				// navigate to home page after login
@@ -254,22 +259,27 @@ function login() {
 			}
 		}
 	};
-	var url = "http://attendanceportal-env.kehejuewsh.ap-south-1.elasticbeanstalk.com/v1/rest/users/";
-	url += userId;
-	if(userId != null && userId != undefined && password != null && password != undefined){
-		document.getElementById("loader").style.visibility = "visible";
+	var url = USERS_URI;
+	url += "/"+userId;
+	if(userId != "" && userId != undefined && password != "" && password != undefined){
+		showLoader();
 		xhttp.open("GET", url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
 				+ window.btoa(userId + ':' + password));
 		xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		xhttp.send();
 	}
+	else{
+		var responseMessage = document.getElementById('loginMessage');
+		responseMessage.innerHTML = '<p> User Id/Password Empty';
+		return;
+	}
 }
 
 
 /* To log a member out from system. Saved user details are deleted from cache memory */
 function logOut() {
-	localStorage.removeItem('loggedInMember');
+	localStorage.removeItem('loggedInUser');
 	// navigate to login page after logout
 	window.location.href = '../index.html';
 }
@@ -277,12 +287,9 @@ function logOut() {
 
 /* To parse user details saved in cache memory */
 function retrieveUserDetailsFromCache(){
-	// retrieve userId, password from cache
-	var parsedCacheObject = JSON.parse(localStorage.getItem('loggedInMember'));
+	// retrieve usser role from cache
+	var parsedCacheObject = JSON.parse(localStorage.getItem('loggedInUser'));
 	
-	var userId;
-	var password;
-	var role;
 	if(parsedCacheObject == null){
 		return;
 	}
@@ -290,19 +297,25 @@ function retrieveUserDetailsFromCache(){
 		if (parsedCacheObject.hasOwnProperty(key)) {
 			
 			var val = parsedCacheObject[key];
-			if (key == 'customizedUserId' && val != null) {
-				userId = val;
-			} else if (key == 'userId' && val != null) {
-				userId = val;
-			} else if (key == 'password' && val != null) {
-				password = val;
-			}else if (key == 'userRole' && val != null) {
-				role = val;
+			if (key == 'userRole' && val != null) {
+				return val;
 			}
 			
 		}
 	}
-	return [userId,password,role];
+	return;
+}
+
+
+function showLoader(){
+	document.getElementById("loader").className="loader";
+	document.getElementById("loader").style.visibility = "visible";
+	document.getElementById("bodycontents").style.visibility = "hidden";
+}
+
+function hideLoader(){
+	document.getElementById("loader").className="";
+	document.getElementById("bodycontents").style.visibility = "visible";
 }
 
 
