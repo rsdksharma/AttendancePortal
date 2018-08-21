@@ -36,6 +36,7 @@ import com.syars.attendance.vo.UserVO;
 public class UserDao {
 	private DBCollection col = null;
 	UserMapper mapper = new UserMapper();
+	MemberDao memberDao = new MemberDao();
 
 	public UserVO getUserCredentials(String userId) throws DatabaseException {
 		UserVO user = null;
@@ -78,7 +79,7 @@ public class UserDao {
 	public String registerMemberAsUser(UserVO userVo) throws DatabaseException {
 		String createdUserId = null;
 		try {
-			if (!isMemberRegistered(userVo.getMemberId())) {
+			if (!memberDao.isMemberRegistered(userVo.getMemberId(), true)) {
 				throw new DatabaseException("Member not registered", null);
 			}
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.USER_COLLECTION);
@@ -116,41 +117,9 @@ public class UserDao {
 		tokenizer.nextToken();
 		StringBuilder builder = new StringBuilder();
 		builder.append(AttendanceConstants.USER_);
-		String userId = builder.append(tokenizer.nextToken()).toString();
-		System.out.println(">>>>userId:" + userId);
-		return userId;
+		return builder.append(tokenizer.nextToken()).toString();
 	}
 
-	private boolean isMemberRegistered(String memberId) throws DatabaseException {
-		try {
-			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
-
-			// create query
-			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, memberId).get();
-
-			DBCursor cursor = col.find(query);
-			// if result found then update member details with IS_USER = true and return
-			// true
-			if (cursor.size() > 0) {
-				BasicDBObject update = new BasicDBObject();
-				update.append("$set", new BasicDBObject(DBCollectionAttributes.IS_USER, true));
-				WriteResult updateResult = col.update(query, update);
-				if (updateResult.isUpdateOfExisting()) {
-					return true;
-				}
-			}
-			return false;
-
-		} catch (MongoTimeoutException e) {
-			System.out.println("UserDao class - MongoTimeoutException:" + e.getMessage());
-			throw new DatabaseException("MongoTimeoutException", e);
-		} catch (MongoServerException e) {
-			throw new DatabaseException("MongoServerException", e);
-		} finally {
-			// close resources
-			MongoDBUtils.releaseResource();
-		}
-	}
 
 	public Map<String, UserVO> getAllUsers() throws DatabaseException {
 		Map<String, UserVO> userMap = new HashMap<String, UserVO>();

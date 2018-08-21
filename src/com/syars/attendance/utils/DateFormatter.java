@@ -21,31 +21,31 @@ import java.util.Date;
 import com.ulok.inf.logger.MessageLogger;
 
 public class DateFormatter {
-	
+
 	public static String formatDate(Date date) {
+		final String methodName = "formatDate";
 		String formattedDate = null;
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			formattedDate = dateFormat.format(date);
-			MessageLogger.logInfo(DateFormatter.class, "formatDate", null, "formatted Date:"+formattedDate);
-		}catch(IllegalArgumentException | NullPointerException e) {
-			System.out.println("Date formatting exception");
+		} catch (IllegalArgumentException | NullPointerException e) {
+			MessageLogger.logError(DateFormatter.class, methodName, null, "Error in formatting date", e);
 		}
 		return formattedDate;
 	}
-	
+
 	public static Date formatStringAsDate(String stringDate) {
+		final String methodName = "formatStringAsDate";
 		Date formattedDate = null;
 		DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		try {
 			formattedDate = formatter.parse(stringDate);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MessageLogger.logError(DateFormatter.class, methodName, null, "Error in parsing string as date", e);
 		}
-		
+
 		return formattedDate;
-		
+
 	}
 
 }

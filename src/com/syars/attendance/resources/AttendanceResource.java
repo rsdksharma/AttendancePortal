@@ -14,7 +14,7 @@ Change Date		Name		Description
 package com.syars.attendance.resources;
 
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -31,12 +31,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.syars.attendance.constants.AttendanceConstants;
 import com.syars.attendance.constants.ResourcePathConstants;
 import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.PresenceService;
 import com.syars.attendance.utils.DateFormatter;
 import com.syars.attendance.vo.PresenceVO;
+import com.syars.attendance.vo.ResponseVO;
 
 @DenyAll
 @Path(ResourcePathConstants._ATTENDANCE)
@@ -64,14 +64,32 @@ public class AttendanceResource {
 	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 	public Response retrieveAllAtendance() {
 		
-		Map<String, Set<String>> presenceMap = presenceService.retrievePresenceForAll();
+		List<ResponseVO> presenceResponse = presenceService.retrievePresenceForAll();
 		
 		Response response = Response.noContent().entity("No Member found").build();
-		if(presenceMap.containsKey(AttendanceConstants.DB_EXCEPTION)) {
+		/*if(presenceMap.containsKey(AttendanceConstants.DB_EXCEPTION)) {
 			response = Response.status(503).entity("DB Exception occured").build();
+		}*/
+		if (presenceResponse != null && !presenceResponse.isEmpty()) {
+			response = Response.ok().entity(presenceResponse).build();
 		}
-		else if (presenceMap != null && !presenceMap.isEmpty()) {
-			response = Response.ok().entity(presenceMap).build();
+		return response;
+	}
+	
+	@GET
+	@Path(ResourcePathConstants._MEMBERS)
+	@RolesAllowed({ Roles.ADMIN })
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public Response retrieveAttendanceByDate() {
+		
+		List<ResponseVO> presenceList = presenceService.retrieveAttendanceByDate(DateFormatter.formatDate(new Date()));
+		
+		Response response = Response.noContent().entity("No Member found").build();
+		if(presenceList == null) {
+			response = Response.status(503).entity("No Member found").build();
+		}
+		else if (presenceList != null && !presenceList.isEmpty()) { 
+			response = Response.ok().entity(presenceList).build();
 		}
 		return response;
 	}
@@ -87,9 +105,12 @@ public class AttendanceResource {
 		if(result == 503) {
 			response = Response.status(503).entity("DB Exception Occured").build();
 		}
-		else if (result > 0 && result != 503) {
+		else if(result == -1) {
+			response = Response.status(500).entity("Presence could not be created. This member is not registered.").build();
+		}
+		else if (result > 0) {
 			response = Response.status(201)
-					.entity("Presence Created for member:" + presenceVo.getMemberId() + " and date:" + new Date())
+					.entity("Presence Created for member:" + presenceVo.getMemberId() + " and date:" + DateFormatter.formatDate(new Date()))
 					.build();
 		}
 		return response;

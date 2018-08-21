@@ -13,6 +13,7 @@ Change Date		Name		Description
 
 package com.syars.attendance.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,12 +35,16 @@ import com.syars.attendance.constants.DBCollectionAttributes;
 import com.syars.attendance.exceptions.DatabaseException;
 import com.syars.attendance.utils.DateFormatter;
 import com.syars.attendance.utils.MongoDBUtils;
+import com.syars.attendance.vo.MemberVO;
 import com.syars.attendance.vo.PresenceVO;
+import com.syars.attendance.vo.ResponseVO;
+import com.ulok.inf.logger.MessageLogger;
 
 public class PresenceDao {
 	private DBCollection col = null;
 
 	public int insertPresence(PresenceVO presenceVo) throws DatabaseException {
+		final String methodName = "insertPresence";
 		int result = 0;
 		
 		try {
@@ -52,15 +57,14 @@ public class PresenceDao {
 			presenceDoc.put("$addToSet", new BasicDBObject(DBCollectionAttributes.MEMBER_ID, presenceVo.getMemberId()));
 			WriteResult writeResult = col.update(query, presenceDoc);
 			result = writeResult.getN();
-			System.out.println(">>>>result_1:"+result);
+			
 			//if not updated then create a new list
-			if (result == 0 ) {
+			if (!writeResult.isUpdateOfExisting() ) {
 				BasicDBObject presenceDocNew = mapToDBObject(presenceVo);
-				WriteResult writeResultNew = col.insert(presenceDocNew);
-				result = writeResultNew.getN();
-				System.out.println(">>>>result_2:"+result);
+				writeResult = col.insert(presenceDocNew);
+				result++;
 			}
-			System.out.println(">>>>result_final:"+result);
+			MessageLogger.logInfo(this, methodName, presenceVo.getMemberId(), "result of presence insertion:"+writeResult);
 			return result;
 
 		} catch (MongoTimeoutException e) {
@@ -86,16 +90,22 @@ public class PresenceDao {
 		return newDBObject;
 	}
 
-	public Map<String, Set<String>> retrievePresenceForAll() throws DatabaseException {
-		Map<String, Set<String>> PresenceMap = new HashMap<String, Set<String>>();
-
+	public List<ResponseVO> getAllPresenceResponse() throws DatabaseException{
+		List<ResponseVO> responseList = new ArrayList<ResponseVO>();
 		try {
+			MemberDao memberDao = new MemberDao();
+			Map<String, MemberVO> memberMap = memberDao.getAllMembers();
+			col = null;
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
 
 			// create set of members present
 			Set<String> memberSet = extractUniqueMembers();
 			for (String member : memberSet) {
-				PresenceMap.put(member, extractPresenceDates(member));
+				ResponseVO responseVO = new ResponseVO();
+				responseVO.setMemberVo(memberMap.get(member));
+				responseVO.setAttendanceSet(extractPresenceDates(member));
+				
+				responseList.add(responseVO);
 			}
 
 		} catch (MongoTimeoutException e) {
@@ -106,7 +116,34 @@ public class PresenceDao {
 			// close resources
 			MongoDBUtils.releaseResource();
 		}
-		return PresenceMap;
+		
+		return responseList;
+	}
+	public Map<MemberVO, Set<String>> retrievePresenceForAll() throws DatabaseException {
+		
+		Map<MemberVO, Set<String>> retVal = new HashMap<MemberVO, Set<String>>();
+
+		try {
+			MemberDao memberDao = new MemberDao();
+			Map<String, MemberVO> memberMap = memberDao.getAllMembers();
+			col = null;
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
+
+			// create set of members present
+			Set<String> memberSet = extractUniqueMembers();
+			for (String member : memberSet) {
+				retVal.put(memberMap.get(member), extractPresenceDates(member));
+			}
+
+		} catch (MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
+		} catch (MongoServerException e) {
+			throw new DatabaseException("MongoServerException", e);
+		} finally {
+			// close resources
+			MongoDBUtils.releaseResource();
+		}
+		return retVal;
 	}
 
 	public Set<String> extractUniqueMembers() throws DatabaseException {
@@ -170,17 +207,17 @@ public class PresenceDao {
 		return dateSet;
 	}
 	
-	public int getCount(String date) throws DatabaseException {
-		int count = 0;
+	public List<String> retrieveCountByDate(String date) throws DatabaseException{
+		
+		List<String> members = new ArrayList<String>();
 		try {
 			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
 			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes._ID, date).get();
 			DBCursor cursor = col.find(query);
 			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
-				List<String> members = (List<String>)result.get(DBCollectionAttributes.MEMBER_ID);
+				members = (List<String>)result.get(DBCollectionAttributes.MEMBER_ID);
 				System.out.println("Members"+members);
-				count+=members.size();
 			}
 		}catch (MongoTimeoutException e) {
 			throw new DatabaseException("MongoTimeoutException", e);
@@ -190,8 +227,42 @@ public class PresenceDao {
 			// close resources
 			MongoDBUtils.releaseResource();
 		}
-
-		return count;
+		return members;
+	}
+	
+public List<ResponseVO> retrieveAttendanceByDate(String date) throws DatabaseException{
+		
+		List<ResponseVO> responseList = new ArrayList<ResponseVO>();
+		MemberDao memberDao = new MemberDao();
+		List<String> members = null;
+		try {
+			Map<String, MemberVO> memberMap = memberDao.getAllMembers();
+			col = null;
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.PRESENCE_COLLECTION);
+			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes._ID, date).get();
+			DBCursor cursor = col.find(query);
+			while (cursor.hasNext()) {
+				DBObject result = cursor.next();
+				members = (List<String>)result.get(DBCollectionAttributes.MEMBER_ID);
+				System.out.println("Members"+members);
+			}
+			for (String member : members) {
+				ResponseVO responseVO = new ResponseVO();
+				responseVO.setMemberVo(memberMap.get(member));
+				//responseVO.setAttendanceSet(extractPresenceDates(member));
+				
+				responseList.add(responseVO);
+			}
+			
+		}catch (MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
+		} catch (MongoServerException e) {
+			throw new DatabaseException("MongoServerException", e);
+		} finally {
+			// close resources
+			MongoDBUtils.releaseResource();
+		}
+		return responseList;
 	}
 
 }

@@ -22,6 +22,7 @@ import com.syars.attendance.dao.UserDao;
 import com.syars.attendance.exceptions.DatabaseException;
 import com.syars.attendance.mappers.MemberMapper;
 import com.syars.attendance.mappers.UserMapper;
+import com.syars.attendance.resources.AttendanceResource;
 import com.syars.attendance.resources.MemberResource;
 import com.syars.attendance.utils.DateFormatter;
 import com.syars.attendance.utils.MongoDBUtils;
@@ -58,12 +59,13 @@ public class MongoClient {
 		MemberDao memberDao = new MemberDao();
 		UserDao userDao = new UserDao();
 		MemberResource MemberResource = new MemberResource();
+		AttendanceResource atendanceResource = new AttendanceResource();
 		PresenceVO vo = new PresenceVO();
-		vo.setMemberId("MSEC_9");
+		vo.setMemberId("MSEC_2");
 		//presenceDao.insertPresence(vo);
 		//System.out.println(">>>>ALL PRESENCE:"+ new XStream().toXML(presenceDao.retrievePresenceForAll()));
 		//System.out.println(">>>>result:"+ new XStream().toXML(presenceDao.extractUniqueMembers()));
-		System.out.println(">>>>result:"+ new XStream().toXML(MemberResource.getAllMembers()));
+		System.out.println(">>>>result:"+ new XStream().toXML(atendanceResource.insertPresence(vo)));
 		
 	}
 	

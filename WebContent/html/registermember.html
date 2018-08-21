@@ -1,15 +1,3 @@
-<!--
-Copyright: SYARS
-2018
-
-File Name: registermember.html
-************************************************
-Change Date		Name			Description
-07/08/2018		Deepak S.		Initial Creation
-												 
-************************************************
--->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,22 +6,22 @@ Change Date		Name			Description
 <link rel="stylesheet" href="../css/attendance_portal.css">
 <script src="../js/attendance_portal.js"></script>
 </head>
-<body>
-	<h1>Attendance Portal - Register Member</h1>
-
-	<div id='loader'>
-		<div id='bodycontents'>
-			<form name="inputform" method="post" onsubmit='registerMember()'>
-				Full Name:<input type="text" id="fullName"><br>
-				<br> Mobile Number:<input type="text" id="mobileNumber"><br>
-				<br> Email Id:<input type="text" id="emailId"><br>
-				<br> Branch:<input type="text" id="branch"><br>
-				<br> Fathers Name:<input type="text" id="fathersName"><br>
-				<br> Mothers Name:<input type="text" id="mothersName"><br><br>
-			</form>
-			<button type="submit" onclick=registerMember()>Submit</button><br><br>
-			<div id='response'></div>
-		</div>
-	</div>
+<body onload = hideLoader()>
+<h1>Attendance Portal - Register Member</h1><br>
+<a href="loggedin.html">BACK/HOME</a><br><br>
+<div class="loader" id ='loader'>
+<div id = 'bodycontents'>
+<table >
+	<tr><td>Full Name:</td><td><input type = "text" id = "fullName"></td></tr>
+	<tr><td>Mobile Number:</td><td><input type = "text" id = "mobileNumber"></td></tr>
+	<tr><td>Email Id:</td><td><input type = "text" id = "emailId"></td></tr>
+	<tr><td>Branch:</td><td><input type = "text" id = "branch"></td></tr>
+	<tr><td>Fathers Name:</td><td><input type = "text" id = "fathersName"></td></tr>
+	<tr><td>Mothers Name:</td><td><input type = "text" id = "mothersName"></td></tr>
+</table>
+<button type = "submit" onclick=registerMember()>Submit</button><br><br>
+<div id = 'response'></div><br>
+</div>
+</div>
 </body>
 </html>

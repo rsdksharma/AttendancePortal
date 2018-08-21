@@ -11,7 +11,8 @@ Change Date		Name		Description
 
 */
 
-var BASE_URI = "http://localhost:8080/AttendancePortal-1.0.1-SNAPSHOT";
+//var BASE_URI = "http://attendanceportal-env.3rj94hn5hz.ap-south-1.elasticbeanstalk.com";
+var BASE_URI = "http://localhost:8080/AttendancePortal-1.0.0-SNAPSHOT";
 var ATTENDANCE_URI = BASE_URI+"/v1/rest/attendance";
 var USERS_URI = BASE_URI+"/v1/rest/users";
 var MEMBERS_URI = BASE_URI+"/v1/rest/members";
@@ -21,58 +22,99 @@ var MEMBERS_URI = BASE_URI+"/v1/rest/members";
 * Attendance Portal functionalities.
 */
 
+function retrieveAllAttendanceForToday(){
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			var members = document.getElementById('retrieveTodaysMembers');
+			if(this.status == 200){
+				var APIResponse = xhttp.responseText;
+				APIResponse = JSON.parse(APIResponse);
+				var table_data = '<thead><tr><th>Name</th><th>Member Id</th></tr></thead><tbody>';
+				for(var key in APIResponse){
+					var val_responseVo = APIResponse[key];
+					for(var key_responseVo in val_responseVo){
+						if(key_responseVo == "memberVo"){
+							var memberVo = val_responseVo[key_responseVo];
+							for(var key_member in memberVo){
+								if(key_member == "fullName"){
+									table_data+= '<tr><td>'+memberVo[key_member]+'</td>'
+								}
+								else if(key_member == "memberID"){
+									table_data+= '<td>'+memberVo[key_member]+'</td></tr>'
+								}
+							}
+						}
+					}
+				}
+				members.innerHTML = table_data;
+				// show utility buttons
+				showUtilityButtons('retrieveTodaysMembers');
+			}
+			else{
+				members.innerHTML = this.responseText;
+			}
+			hideLoader();
+		}
+	};
+	
+	var method = "GET";
+	var url = ATTENDANCE_URI+"/members";
+	
+	callService(xhttp, method, url);
+
+}
+
 /* To retrieve member related details and save in cache memory*/
 function retrieveAllMembers() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			hideLoader();
-			var APIResponse = xhttp.responseText;
-			APIResponse = JSON.parse(APIResponse);
-			// Put the object into storage
-			localStorage.setItem('testObject', JSON.stringify(APIResponse));
-			// Retrieve the object from storage
-			var parsedCacheObject = JSON.parse(localStorage
-					.getItem('testObject'));
-			console.log('parsedCacheObject: ', parsedCacheObject);
-
-			var members = document.getElementById('retrieveAllMembers');
-			var innerHTMLDOM = '<p>Retrieved members from cache:<br><br>';
-			for ( var key in parsedCacheObject) {
-				if (parsedCacheObject.hasOwnProperty(key)) {
-					var val = parsedCacheObject[key];
-					console.log('key_1:' + key + ',val_1:' + val);
-					for ( var key2 in val) {
-						if (val.hasOwnProperty(key2)
-								&& (key2 == 'fullName' || key2 == 'memberID')
-								&& val[key2] != null) {
-							innerHTMLDOM += val[key2] + '<br>';
-							console.log("innerHTML:" + innerHTMLDOM);
+		if (this.readyState == 4) {
+			var membersTable = document.getElementById('retrieveAllMembers');
+			if(this.status == 200){
+				var APIResponse = xhttp.responseText;
+				APIResponse = JSON.parse(APIResponse);
+				// Put the object into storage
+				localStorage.setItem('AllMembers', JSON.stringify(APIResponse));
+				// Retrieve the object from storage
+				var parsedCacheObject = JSON.parse(localStorage
+						.getItem('AllMembers'));
+				var table_data = '<thead><tr><th>Name</th><th>Member Id</th></tr></thead><tbody>';
+				for ( var key in parsedCacheObject) {
+					if (parsedCacheObject.hasOwnProperty(key)) {
+						var val = parsedCacheObject[key];
+						for ( var key2 in val) {
+							if (val.hasOwnProperty(key2)){
+								var id = val[key2];
+								if(key2 == 'fullName' && val[key2] != null){
+									table_data += '<tr><td>'+ val[key2] + '</td>';
+								}
+								if(key2 == 'memberID' && val[key2] != null){
+									table_data += "<td>"+ val[key2] + '</td></tr>';
+								}
+							}
 						}
 					}
-					innerHTMLDOM += '  <br>';
 				}
+				table_data += '</tbody>';
+				membersTable.innerHTML = table_data;
+				
+				// show utility buttons
+				showUtilityButtons('retrieveAllMembers');
 			}
-			members.innerHTML = innerHTMLDOM;
+			else{
+				membersTable.innerHTML = this.responseText;
+			}
+			hideLoader();
 		}
 	};
 	
 	var method = "GET";
 	var url = MEMBERS_URI;
 	
-	// retrieve userRole from cache and set to header
-	var userRole = retrieveUserDetailsFromCache();
-	if(userRole != undefined && userRole != null){
-		showLoader();
-		xhttp.open(method, url, true);
-		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + userRole));
-		xhttp.setRequestHeader("Content-Type", "application/json");
-		
-		xhttp.send();
-	}
-
+	callService(xhttp, method, url);
 }
+
 
 
 /* To retrieve the number of attendance for today's date */
@@ -81,37 +123,27 @@ function displayCount() {
 	xhttp.onreadystatechange = function() {
 		var count = document.getElementById('count');
 		if (this.readyState == 4) {
-			hideLoader();
+			
 			if(this.status == 200){
 				console.log("count:" + this.responseText);
 				count.innerHTML = '<p>Count for today is:' + this.responseText;
 			}
 			else{
-				count.innerHTML = '<p>' + this.responseText;
+				count.innerHTML = '<p>' + xhttp.responseText;
 			}
+			hideLoader();
 		}
 	};
 	var method = "GET";
 	var url = ATTENDANCE_URI+"/count";
 
-	// retrieve userRole from cache and set to header
-	var userRole = retrieveUserDetailsFromCache();
-	if(userRole != undefined && userRole != null){
-		showLoader();
-		xhttp.open(method, url, true);
-		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + userRole));
-		xhttp.setRequestHeader("Content-Type", "application/json");
-		
-		xhttp.send();
-	}
+	callService(xhttp, method, url);
 }
 
 /* To insert attendance for specific member in DB */
 function insertAttendance() {
-	
 	// get memberId from input
-	var memberId = document.getElementById('memberid').value;
+	var memberId = document.getElementById('memberId').value;
 	//create JSON data from inputs
 	var data = {};
 	data.memberId = memberId;
@@ -119,28 +151,16 @@ function insertAttendance() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			hideLoader();
 			console.log("response:" + this.responseText);
 			var message = document.getElementById('response');
 			message.innerHTML = '<p>' + this.responseText;
+			hideLoader();
 		}
 	};
 	
 	var method = "POST";
 	var url = ATTENDANCE_URI;
-	
-	// retrieve userRole from cache and set to header
-	var userRole = retrieveUserDetailsFromCache();
-	if(userRole != undefined && userRole != null){
-		showLoader();
-		xhttp.open(method, url, true);
-		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + userRole));
-		xhttp.setRequestHeader("Content-Type", "application/json");
-		
-		// call service
-		xhttp.send(JSON.stringify(data));
-	}
+	callService(xhttp, method, url, data);
 }
 
 
@@ -159,28 +179,16 @@ function registerMember() {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			// Typical action to be performed when the document is ready:
-			hideLoader();
 			console.log("response:" + this.responseText);
 			var responseMessage = document.getElementById('response');
 			responseMessage.innerHTML = '<p>' + this.responseText;
+			hideLoader();
 		}
 	};
 	
 	var method = "POST";
 	var url = MEMBERS_URI;
-	
-	// retrieve userRole from cache and set to header
-	var userRole = retrieveUserDetailsFromCache();
-	if(userRole != undefined && userRole != null){
-		showLoader();
-		xhttp.open(method, url, true);
-		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + userRole));
-		xhttp.setRequestHeader("Content-Type", "application/json");
-		
-		// call service
-		xhttp.send(JSON.stringify(data));
-	}
+	callService(xhttp, method, url, data);
 }
 
 
@@ -200,11 +208,11 @@ function registerUser(action) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			hideLoader();
 			// Typical action to be performed when the document is ready:
 			console.log("response:" + this.responseText);
 			var responseMessage = document.getElementById('response');
 			responseMessage.innerHTML = '<p>' + this.responseText;
+			hideLoader();
 		}
 	};
 	
@@ -215,18 +223,7 @@ function registerUser(action) {
 	data.password = document.getElementById('password').value;
 	data.customizedUserId = document.getElementById('customizedUserId').value;
 
-	// retrieve userRole from cache and set to header
-	var userRole = retrieveUserDetailsFromCache();
-	if(userRole != undefined && userRole != null){
-		showLoader();
-		xhttp.open(method, url, true);
-		xhttp.setRequestHeader('Authorization', 'Basic '
-				+ window.btoa('Role' + ':' + userRole));
-		xhttp.setRequestHeader("Content-Type", "application/json");
-		
-		// call service
-		xhttp.send(JSON.stringify(data));
-	}
+	callService(xhttp, method, url, data);
 
 }
 
@@ -242,7 +239,6 @@ function login() {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			// Typical action to be performed when the document is ready:
-			hideLoader();
 			
 			if (this.status == 200) {
 				var APIResponse = JSON.parse(this.responseText);
@@ -257,16 +253,18 @@ function login() {
 				var responseMessage = document.getElementById('loginMessage');
 				responseMessage.innerHTML = '<p>' + this.responseText;
 			}
+			hideLoader();
 		}
 	};
+	var method = "GET";
 	var url = USERS_URI;
 	url += "/"+userId;
 	if(userId != "" && userId != undefined && password != "" && password != undefined){
 		showLoader();
-		xhttp.open("GET", url, true);
+		xhttp.open(method, url, true);
 		xhttp.setRequestHeader('Authorization', 'Basic '
 				+ window.btoa(userId + ':' + password));
-		xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+		xhttp.setRequestHeader("Content-Type", "application/json");
 		xhttp.send();
 	}
 	else{
@@ -307,6 +305,25 @@ function retrieveUserDetailsFromCache(){
 }
 
 
+function callService(xhttp, method, url, data){
+	// retrieve userRole from cache and set to header
+	var userRole = retrieveUserDetailsFromCache();
+	if(userRole != undefined && userRole != null){
+		showLoader();
+		xhttp.open(method, url, true);
+		xhttp.setRequestHeader('Authorization', 'Basic '
+				+ window.btoa('Role' + ':' + userRole));
+		xhttp.setRequestHeader("Content-Type", "application/json");
+		
+		if(data != null | data != undefined){
+			xhttp.send(JSON.stringify(data));
+		}
+		else{
+			xhttp.send();
+		}
+	}
+}
+
 function showLoader(){
 	document.getElementById("loader").className="loader";
 	document.getElementById("loader").style.visibility = "visible";
@@ -318,4 +335,31 @@ function hideLoader(){
 	document.getElementById("bodycontents").style.visibility = "visible";
 }
 
-
+function showUtilityButtons(tableId){
+	var id = "#"+tableId;
+	$(id).dataTable({
+		dom: 'Bfrtip',
+		processing: true,
+		 buttons: [
+			
+			{
+				extend: 'copyHtml5',
+				title: 'Members '
+			},
+			{
+				extend: 'excelHtml5',
+				title: 'Members '
+			},
+			
+			{
+				extend: 'pdfHtml5',
+				title: 'Members ',
+			},
+			{
+				extend: 'print',
+				text: 'Print',
+				title: 'Members ',
+			}
+		]
+	});
+}

@@ -31,6 +31,7 @@ import com.syars.attendance.exceptions.DatabaseException;
 import com.syars.attendance.mappers.MemberMapper;
 import com.syars.attendance.utils.MongoDBUtils;
 import com.syars.attendance.vo.MemberVO;
+import com.ulok.inf.logger.MessageLogger;
 
 public class MemberDao {
 	private DBCollection col = null;
@@ -64,16 +65,49 @@ public class MemberDao {
 		}
 		return createdMemberId;
 	}
+	
+	public boolean isMemberRegistered(String memberId, boolean isUserRegistrationProcess) throws DatabaseException {
+		final String methodName = "isMemberRegistered";
+		boolean isMemberRegistered = false;
+		try {
+			col = MongoDBUtils.getMongoDBCollection(DBCollectionAttributes.MEMBER_COLLECTION);
+
+			// create query
+			DBObject query = BasicDBObjectBuilder.start().add(DBCollectionAttributes.MEMBER_ID, memberId).get();
+
+			DBCursor cursor = col.find(query);
+			if (cursor.size() > 0) {
+				isMemberRegistered = true;
+				
+				/* if called by userRegistrationProcess then update member details with
+				   IS_USER = true and return true */
+				boolean isMemberAlreadyRegisteredAsUser = cursor.next().containsField(DBCollectionAttributes.IS_USER);
+				MessageLogger.logInfo(this, methodName, memberId, "Is Member Already registered as user:"
+						+isMemberAlreadyRegisteredAsUser);
+				if(isUserRegistrationProcess && !isMemberAlreadyRegisteredAsUser) {
+					BasicDBObject update = new BasicDBObject();
+					update.append("$set", new BasicDBObject(DBCollectionAttributes.IS_USER, true));
+					col.update(query, update);
+					MessageLogger.logInfo(this, methodName, memberId, "member updated with "
+							+ "IS_USER = true for user registration process");
+				}
+			}
+			else {
+				MessageLogger.logWarning(this, methodName, memberId, "Member is not registered", null);
+			}
+			return isMemberRegistered;
+
+		} catch (MongoTimeoutException e) {
+			throw new DatabaseException("MongoTimeoutException", e);
+		} catch (MongoServerException e) {
+			throw new DatabaseException("MongoServerException", e);
+		} finally {
+			// close resources
+			MongoDBUtils.releaseResource();
+		}
+	}
 
 	private String createUniqueMemberId(MemberVO memberVo) {
-		/*String uniqueID = UUID.randomUUID().toString();
-		StringTokenizer tokenizer = new StringTokenizer(uniqueID, "-");
-		StringBuilder builder = new StringBuilder();
-		builder.append(AttendanceConstants.MEMBER_PREFIX);
-		builder.append(AttendanceConstants.BRANCH_CODE_);
-		String memberId = builder.append(tokenizer.nextToken()).toString();
-		System.out.println(">>>>memberId:" + memberId);*/
-
 		return AttendanceConstants.MEMBER_PREFIX + AttendanceConstants.BRANCH_CODE_
 				+ MongoDBUtils.getNextValue(DBCollectionAttributes.MEMBER_SEQUENCE);
 	}

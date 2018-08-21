@@ -1,15 +1,3 @@
-<!--
-Copyright: SYARS
-2018
-
-File Name: registeruser.html
-************************************************
-Change Date		Name			Description
-07/08/2018		Deepak S.		Initial Creation
-												 
-************************************************
--->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,44 +6,45 @@ Change Date		Name			Description
 <link rel="stylesheet" href="../css/attendance_portal.css">
 <script src="../js/attendance_portal.js"></script>
 </head>
-<body>
-	<h1>Attendance Portal - Register Member As User</h1>
+<body onload = hideLoader()>
+<h1>Attendance Portal - Register Member As User</h1><br>
+<a href="loggedin.html">BACK/HOME</a><br><br>
 
-	<div id='loader'>
-		<div id='bodycontents'>
-			<form name="inputform" method="post" onsubmit='registerMember()'>
-				Member Id:<input type="text" id="memberId"><br>
-				<br> User Role:<input type="text" id="userRole"><br>
-				<br> Password:<input type="password" id="password"><br>
-				<br> Confirm Password:<input type="password" id="confirmPassword"><br>
-				<br> Is Customized:<input type="checkbox" id="isCustomized" onclick="myFunction()"><br><br>
-				<div id="customizedID" style="display: none">
-					<label>Customized User Id:</label> <input type="text" id="customizedUserId"><br><br>
-				</div>
-			</form>
-			<button type="submit" onclick=handleRegister() id="register">Submit</button>
-			<button type="submit" onclick=handleUpdate() id="update">Update</button><br><br>
-			<div id='response'></div>
-		</div>
-	</div>
+<div class="loader" id ='loader'>
+<div id = 'bodycontents'>
+<table >
+	<tr><td>Member Id:</td><td><input type = "text" id = "memberId"></td></tr>
+	<tr><td>User Role:</td><td><input type = "text" id = "userRole"></td></tr>
+	<tr><td>Password:</td><td><input type = "text" id = "password"></td></tr>
+	<tr><td>Confirm Password:</td><td><input type = "text" id = "confirmPassword"></td></tr>
+	<tr><td>Is Customized:</td><td><input type="checkbox" id = "isCustomized" onclick="myFunction()"></td></tr>
+	<tr id = "customizedID" style="display:none"><td>Customized Id:</td><td><input type = "text" id = "customizedUserId"></td></tr>
+</table>
 
-	<script>
-		function myFunction() {
-			var checkBox = document.getElementById("isCustomized");
-			var text = document.getElementById("customizedID");
-			if (checkBox.checked == true) {
-				text.style.display = "block";
-			} else {
-				text.style.display = "none";
-			}
-		}
+<button type = "submit" onclick=handleRegister() id="register">Submit</button>
+<button type = "submit" onclick=handleUpdate() id="update">Update</button><br><br>
+<div id = 'response'></div><br>
+</div>
+</div>
 
-		function handleRegister() {
-			registerUser("register");
-		}
-		function handleUpdate() {
-			registerUser("update");
-		}
-	</script>
+<script>
+function myFunction() {
+    var checkBox = document.getElementById("isCustomized");
+    var text = document.getElementById("customizedID");
+    if (checkBox.checked == true){
+        text.style.display = "block";
+    } else {
+       text.style.display = "none";
+    }
+}
+
+function handleRegister(){
+	registerUser("register");
+}
+function handleUpdate(){
+	registerUser("update");
+}
+
+</script>
 </body>
 </html>

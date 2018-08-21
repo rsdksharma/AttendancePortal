@@ -35,6 +35,7 @@ import org.glassfish.jersey.internal.util.Base64;
 import com.syars.attendance.constants.AttendanceConstants;
 import com.syars.attendance.constants.Roles;
 import com.syars.attendance.service.UserService;
+import com.ulok.inf.logger.MessageLogger;
 
 @Provider
 public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -56,6 +57,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
+		final String methodName = "filter";
 		Method method = resourceInfo.getResourceMethod();
 		// Access allowed for all
 		if (!method.isAnnotationPresent(PermitAll.class)) {
@@ -95,13 +97,14 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 				Set<String> rolesSet = new HashSet<String>(Arrays.asList(rolesAnnotation.value()));
 
 				if("Role".equals(username)) {
-					System.out.println(">>>>>>>>>>>>>>>>>>role matched, not checking db");
 					if(!rolesSet.contains(password)) {
+						ACCESS_DENIED = Response.status(403).entity(AttendanceConstants.ACCESS_DENIED
+								+"insufficient privileges").build();
 						requestContext.abortWith(ACCESS_DENIED);
 						return;
 					}
 				}
-				// Is user valid?
+				// Is user valid and has valid authorization?
 				else if (!isUserAllowed(username, password, rolesSet)) {
 					requestContext.abortWith(ACCESS_DENIED);
 					return;
@@ -111,14 +114,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 	}
 
 	private boolean isUserAllowed(final String username, final String password, final Set<String> rolesSet) {
-		System.out.println(">>>>inside isUserAllowedMethod, userName:" + username + ", password:" + password
+		final String methodName = "isUserAllowed";
+		MessageLogger.logInfo(this, methodName, null, "userName:" + username + ", password:" + password
 				+ ", rolesAllowed:" + rolesSet);
 
 		boolean isAuthorized = true;
 		UserService userService = new UserService();
 		String authorizationResult = userService.checkUserAuthorization(username, password, rolesSet);
-		System.out.println(">>>> authorizationResult:"+authorizationResult);
-		System.out.println(">>>> rolesSet:"+rolesSet);
+		MessageLogger.logInfo(this, methodName, null, "authorizationResult:"+authorizationResult);
+		
 		// DB exception occurred - internal server error - 503
 		if (AttendanceConstants.DATABASE_EXCEPTION.equals(authorizationResult)) {
 			ACCESS_DENIED = Response.status(503).entity(AttendanceConstants.DATABASE_EXCEPTION).build();
