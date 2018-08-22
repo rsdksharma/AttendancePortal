@@ -11,8 +11,8 @@ Change Date		Name		Description
 
 */
 
-//var BASE_URI = "http://attendanceportal-env.3rj94hn5hz.ap-south-1.elasticbeanstalk.com";
-var BASE_URI = "http://localhost:8080/AttendancePortal-1.0.0-SNAPSHOT";
+var BASE_URI = "http://attendanceportal-env.3rj94hn5hz.ap-south-1.elasticbeanstalk.com";
+//var BASE_URI = "http://localhost:8080/AttendancePortal-1.0.0-SNAPSHOT";
 var ATTENDANCE_URI = BASE_URI+"/v1/rest/attendance";
 var USERS_URI = BASE_URI+"/v1/rest/users";
 var MEMBERS_URI = BASE_URI+"/v1/rest/members";
