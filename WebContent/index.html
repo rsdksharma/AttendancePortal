@@ -19,14 +19,13 @@ Change Date		Name			Description
 <script src="./js/attendance_portal.js"></script>
 </head>
 <body>
-			<h1>Attendance Portal - Login</h1>
-			<div id='loader'>
-			<div id='bodycontents'>
-			<br> User Id:<input id="userId"> Password:<input
-				type="password" id="password">
-			<button onclick="login()">Login</button>
-			<div id="loginMessage"></div>
-		</div>
-	</div>
+	<h1>Attendance Portal - Login</h1><br>
+	<!-- <form onsubmit="login()"> -->
+	User Id:<input id="userId"> 
+	Password:<input type="password" id="password">
+	<button type = "submit" onclick="login()">Login</button>
+	<!-- </form> -->
+	<div id="loginMessage"></div>
+	<div id="loader"></div>
 </body>
 </html>

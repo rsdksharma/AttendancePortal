@@ -244,14 +244,15 @@ public List<ResponseVO> retrieveAttendanceByDate(String date) throws DatabaseExc
 			while (cursor.hasNext()) {
 				DBObject result = cursor.next();
 				members = (List<String>)result.get(DBCollectionAttributes.MEMBER_ID);
-				System.out.println("Members"+members);
 			}
-			for (String member : members) {
-				ResponseVO responseVO = new ResponseVO();
-				responseVO.setMemberVo(memberMap.get(member));
-				//responseVO.setAttendanceSet(extractPresenceDates(member));
-				
-				responseList.add(responseVO);
+			if(members != null) {
+				for (String member : members) {
+					ResponseVO responseVO = new ResponseVO();
+					responseVO.setMemberVo(memberMap.get(member));
+					//responseVO.setAttendanceSet(extractPresenceDates(member));
+					
+					responseList.add(responseVO);
+				}
 			}
 			
 		}catch (MongoTimeoutException e) {

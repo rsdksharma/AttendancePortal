@@ -11,32 +11,113 @@ Change Date		Name		Description
 
 */
 @charset "ISO-8859-1";
+body {
+  background-color: #dff442;
+  padding: 20px;
+  margin: 0;
+}
+/*#main-background {
+	background-image:url("../image/AttendancePortal_4.png");
+	//width:100%;
+	//height:100%;
+	background-repeat:no-repeat;
+	//background-size:100% 100%;
+	//position:fixed;
+	//overflow-y:hidden;
+	min-height:800px;
+}*/
 
-/* this creates interstitial spinning loader. */
-.loader {
-	border: 16px solid #f3f3f3;
+
+#loader {
+    position:absolute;
+    width:100%;
+    left:0;right:0;top:0;bottom:0;
+    background-color: rgba(255,255,255,0.5);
+	z-index:9999;
+    display:none;
+}
+
+@-webkit-keyframes spin {
+	from {-webkit-transform:rotate(0deg);}
+	to {-webkit-transform:rotate(360deg);}
+}
+
+@keyframes spin {
+	from {transform:rotate(0deg);}
+	to {transform:rotate(360deg);}
+}
+
+#loader::after {
+    content:'';
+    display:block;
+    position:fixed;
+    left:48%;top:40%;
+    border: 16px solid #f3f3f3;
 	border-radius: 50%;
 	border-top: 16px solid #3498db;
 	width: 100px;
 	height: 100px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #a4f24b;
+}
+
+.tooltirp {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Tooltip text to show hover box*/
+.tooltiptext {
+    visibility: hidden;
+    width: 170px;
+    background-color: #dafd6f;
+    color: #000000;
+    text-align: center;
+    padding: 5px 0;
+	border: 2px solid rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	opacity:0;
+	-webkit-transition: opacity 0.2s linear;
+	-moz-transition: opacity 0.2s linear;
+	-ms-transition: opacity 0.2s linear;
+	-o-transition: opacity 0.2s linear;
+	transition: opacity 0.2s linear;
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1000;
+    bottom: 130%;
+    margin-left:10px;
+    left: 50%;
+}
+.tooltirp > i:before, .tooltirp > i:after {
+	content: "";
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin: auto;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	top: 100%;
+	left: 4%;
+	margin-left: -9px;
+}
+
+.tooltirp > i:before {
+	border-top: 10px solid #111;
+	border-top: 10px solid rgba(0, 0, 0, 0.5);
+}
+
+.tooltirp > i:after {
+	border-top: 10px solid #DDD;
+	margin-top: 0px;
+	z-index: 1;
+}
+
+
+.tooltirp:hover > i {
 	visibility: visible;
-	-webkit-animation: spin 2s linear infinite; /* Safari */
-	animation: spin 2s linear infinite;
-}
-
-/* Safari */
-@-webkit-keyframes spin { 
-	0%{-webkit-transform: rotate(0deg);}
-
-	100%{-webkit-transform:rotate(360deg);}
-}
-@keyframes spin { 
-	0%{transform: rotate(0deg);}
-	100%{transform:rotate(360deg);}
+	opacity: 1;
 }

@@ -26,11 +26,11 @@ function retrieveAllAttendanceForToday(){
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			var members = document.getElementById('retrieveTodaysMembers');
+			var presentMembers = document.getElementById('presentMembers');
 			if(this.status == 200){
 				var APIResponse = xhttp.responseText;
 				APIResponse = JSON.parse(APIResponse);
-				var table_data = '<thead><tr><th>Name</th><th>Member Id</th></tr></thead><tbody>';
+				var table_data = '<table id="presenceTable" class="table table-bordered table-striped"><thead><tr><th>Name</th><th>Member Id</th></tr></thead><tbody id="todaysMembersTable">';
 				for(var key in APIResponse){
 					var val_responseVo = APIResponse[key];
 					for(var key_responseVo in val_responseVo){
@@ -47,9 +47,10 @@ function retrieveAllAttendanceForToday(){
 						}
 					}
 				}
-				members.innerHTML = table_data;
+				table_data+= '</tbody></table>';
+				presentMembers.innerHTML = table_data;
 				// show utility buttons
-				showUtilityButtons('retrieveTodaysMembers');
+				showUtilityButtons('presenceTable', 'Bfrtip');
 			}
 			else{
 				members.innerHTML = this.responseText;
@@ -65,57 +66,62 @@ function retrieveAllAttendanceForToday(){
 
 }
 
-/* To retrieve member related details and save in cache memory*/
-function retrieveAllMembers() {
+function retrieveRegisteredMembers(isLogin) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			var membersTable = document.getElementById('retrieveAllMembers');
 			if(this.status == 200){
 				var APIResponse = xhttp.responseText;
 				APIResponse = JSON.parse(APIResponse);
 				// Put the object into storage
-				localStorage.setItem('AllMembers', JSON.stringify(APIResponse));
-				// Retrieve the object from storage
-				var parsedCacheObject = JSON.parse(localStorage
-						.getItem('AllMembers'));
-				var table_data = '<thead><tr><th>Name</th><th>Member Id</th></tr></thead><tbody>';
-				for ( var key in parsedCacheObject) {
-					if (parsedCacheObject.hasOwnProperty(key)) {
-						var val = parsedCacheObject[key];
-						for ( var key2 in val) {
-							if (val.hasOwnProperty(key2)){
-								var id = val[key2];
-								if(key2 == 'fullName' && val[key2] != null){
-									table_data += '<tr><td>'+ val[key2] + '</td>';
-								}
-								if(key2 == 'memberID' && val[key2] != null){
-									table_data += "<td>"+ val[key2] + '</td></tr>';
-								}
-							}
-						}
-					}
+				localStorage.setItem('allRegisteredMembers', JSON.stringify(APIResponse));
+				// navigate to home page after login
+				if(isLogin){
+					window.location.href = './html/loggedin.html';
 				}
-				table_data += '</tbody>';
-				membersTable.innerHTML = table_data;
-				
-				// show utility buttons
-				showUtilityButtons('retrieveAllMembers');
-			}
-			else{
-				membersTable.innerHTML = this.responseText;
 			}
 			hideLoader();
 		}
 	};
-	
 	var method = "GET";
 	var url = MEMBERS_URI;
 	
 	callService(xhttp, method, url);
 }
 
-
+/* To retrieve member related details and save in cache memory*/
+function retrieveAllMembersFromCache() {
+	showLoader();
+	var registeredMembers = document.getElementById('registeredMembersDiv');
+	// Retrieve the object from storage
+	var parsedCacheObject = JSON.parse(localStorage.getItem('allRegisteredMembers'));
+	var table_data = '<input id="searchInput" type="text" placeholder="Search Member.." onkeyup="searchMember()"><br><br>';
+	table_data+= '<div id="registeredMembersTableDiv" style="display:none">';
+	table_data+= '<table id="registeredMembersTable" class="table table-bordered table-striped table-hover">';
+	table_data+='<thead><tr><th>Name</th><th>Member Id</th></tr></thead>'
+	table_data+= '<tbody id="searchableBody">';
+	for ( var key in parsedCacheObject) {
+		if (parsedCacheObject.hasOwnProperty(key)) {
+			var val = parsedCacheObject[key];
+			for ( var key2 in val) {
+				if (val.hasOwnProperty(key2)){
+					if(key2 == 'fullName' && val[key2] != null){
+						table_data += "<tr><td>"+ val[key2] + "</td>";
+					}
+					if(key2 == 'memberID' && val[key2] != null){
+						table_data += "<td onclick=\"insertAttendance('"+val[key2]+"')\"><span class='tooltirp'>"+ val[key2] + "<i class='tooltiptext'>Click to Insert Attendance</i></span></td></tr>";
+					}
+				}
+			}
+		}
+	}
+	table_data += '</tbody></table></div>';
+	registeredMembers.innerHTML = table_data;
+	
+	// show utility buttons
+	showUtilityButtons('registeredMembersTable', 't');
+	hideLoader();
+}
 
 /* To retrieve the number of attendance for today's date */
 function displayCount() {
@@ -141,9 +147,9 @@ function displayCount() {
 }
 
 /* To insert attendance for specific member in DB */
-function insertAttendance() {
+function insertAttendance(memberId) {
 	// get memberId from input
-	var memberId = document.getElementById('memberId').value;
+	//var memberId = document.getElementById('memberId').value;
 	//create JSON data from inputs
 	var data = {};
 	data.memberId = memberId;
@@ -246,14 +252,13 @@ function login() {
 				localStorage.setItem('loggedInUser', JSON
 						.stringify(APIResponse));
 
-				// navigate to home page after login
-				window.location.href = './html/loggedin.html';
+				retrieveRegisteredMembers(true);
 			}
 			else {
 				var responseMessage = document.getElementById('loginMessage');
 				responseMessage.innerHTML = '<p>' + this.responseText;
 			}
-			hideLoader();
+			//hideLoader();
 		}
 	};
 	var method = "GET";
@@ -277,7 +282,7 @@ function login() {
 
 /* To log a member out from system. Saved user details are deleted from cache memory */
 function logOut() {
-	localStorage.removeItem('loggedInUser');
+	localStorage.clear();
 	// navigate to login page after logout
 	window.location.href = '../index.html';
 }
@@ -325,20 +330,21 @@ function callService(xhttp, method, url, data){
 }
 
 function showLoader(){
-	document.getElementById("loader").className="loader";
-	document.getElementById("loader").style.visibility = "visible";
-	document.getElementById("bodycontents").style.visibility = "hidden";
+	document.getElementById("loader").style.display = "block";
 }
 
 function hideLoader(){
-	document.getElementById("loader").className="";
-	document.getElementById("bodycontents").style.visibility = "visible";
+	document.getElementById("loader").style.display = "none";
 }
 
-function showUtilityButtons(tableId){
+function showUtilityButtons(tableId, domOptions){
 	var id = "#"+tableId;
 	$(id).dataTable({
-		dom: 'Bfrtip',
+		paging: false,
+        bFilter: false,
+        ordering: false,
+        searching: true,
+	    dom: domOptions,
 		processing: true,
 		 buttons: [
 			
