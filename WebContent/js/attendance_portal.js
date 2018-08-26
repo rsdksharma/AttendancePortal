@@ -53,7 +53,7 @@ function retrieveAllAttendanceForToday(){
 				showUtilityButtons('presenceTable', 'Bfrtip');
 			}
 			else{
-				members.innerHTML = this.responseText;
+				presentMembers.innerHTML = this.responseText;
 			}
 			hideLoader();
 		}
