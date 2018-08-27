@@ -257,8 +257,8 @@ function login() {
 			else {
 				var responseMessage = document.getElementById('loginMessage');
 				responseMessage.innerHTML = '<p>' + this.responseText;
+				hideLoader();
 			}
-			//hideLoader();
 		}
 	};
 	var method = "GET";
